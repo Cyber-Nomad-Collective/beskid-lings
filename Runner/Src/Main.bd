@@ -1,11 +1,11 @@
 // beskid-lings runner.
 //
-//   lings            watch: check the current exercise, rerun it on save
-//   lings verify     check every exercise in order and stop at the first failure
-//   lings list       show every exercise and whether it is done
-//   lings hint       show the hint for the current exercise
+//   ./lings          watch: check the current exercise, rerun it on save
+//   ./lings verify   check every exercise in order and stop at the first failure
+//   ./lings list     show every exercise and whether it is done
+//   ./lings hint     show the hint for the current exercise
 //
-// Run it from the course folder: `beskid -q run --project Runner -- <command>`.
+// `./lings` runs `beskid -q run --project Runner -- <command>` from the course folder.
 
 use Core.Args;
 use Core.Collections.Array;
@@ -116,7 +116,7 @@ i32 Watch(Course course) {
             index = CurrentIndex(course, done);
         } else {
             ReportFailure(exercise, result, index, total);
-            Core.Output.WriteLine("Save the file to check again. Stuck? Run `lings hint` in another terminal. Ctrl+C quits.");
+            Core.Output.WriteLine("Save the file to check again. Stuck? Run `./lings hint` in another terminal. Ctrl+C quits.");
             WaitForChange(exercise, before);
             Core.Output.WriteLineEmpty();
             Core.Output.WriteLine("----------------------------------------------------------------");

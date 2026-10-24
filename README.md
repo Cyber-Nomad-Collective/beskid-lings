@@ -12,7 +12,7 @@ pass. Inspired by rustlings.
 From this folder:
 
 ```
-beskid -q run --project Runner
+./lings
 ```
 
 The runner starts in watch mode. It checks the exercises in order, shows what
@@ -24,10 +24,13 @@ progress is kept in `.lings-state`.
 Other commands, in a second terminal:
 
 ```
-beskid -q run --project Runner -- hint     # hint for the current exercise
-beskid -q run --project Runner -- list     # every exercise and its status
-beskid -q run --project Runner -- verify   # check everything from the start
+./lings hint     # hint for the current exercise
+./lings list     # every exercise and its status
+./lings verify   # check everything from the start
 ```
+
+`./lings` is a short script for `beskid -q run --project Runner -- <command>`.
+Without `-q`, beskid prints every build step before the course output.
 
 You can also check one exercise by hand:
 

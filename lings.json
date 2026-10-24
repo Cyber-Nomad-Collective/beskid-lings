@@ -1,6 +1,6 @@
 {
   "formatVersion": 1,
-  "welcome": "Welcome to beskid-lings. Fix each exercise until it compiles and its tests pass. Save the file and the runner checks it again. Run `lings hint` in another terminal when you are stuck.",
+  "welcome": "Welcome to beskid-lings. Fix each exercise until it compiles and its tests pass. Save the file and the runner checks it again. Run `./lings hint` in another terminal when you are stuck.",
   "final": "You finished every exercise in this milestone. Tell us what was hard.",
   "exercises": [
     {
