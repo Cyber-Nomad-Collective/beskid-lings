@@ -1,0 +1,58 @@
+// generics2
+//
+// Types can be generic too: `type Pair<A, B> { A first, B second }`.
+// Inside the type, `A` and `B` stand for whatever types the user picks:
+// `Pair<string, i32> { first: "age", second: 42 }`. Methods use the same
+// names for their parameter and return types.
+//
+// TODO: `Second` returns the wrong type, and `Swapped` builds the wrong pair.
+
+use Core.Collections.Array;
+
+type Pair<A, B> {
+    A first,
+    B second,
+
+    pub A First() {
+        return this.first;
+    }
+
+    pub A Second() {
+        return this.second;
+    }
+
+    pub Pair<B, A> Swapped() {
+        return Pair<B, A> { first: this.first, second: this.second };
+    }
+}
+
+type Bag<T> {
+    T[] items,
+
+    pub unit Add(mut this, T value) {
+        this.items = Array.Append<T>(this.items, value);
+    }
+
+    pub i64 Size() {
+        return Array.Len<T>(this.items);
+    }
+
+    pub T Last() {
+        return this.items[Array.Len<T>(this.items) - 1_i64];
+    }
+}
+
+test pair_keeps_both_types {
+    Pair<string, i32> age = Pair<string, i32> { first: "age", second: 42 };
+    Testing.Assert.Equal(age.First(), "age", "first");
+    Testing.Assert.Equal(age.Second(), 42, "second");
+    Testing.Assert.Equal(age.Swapped().First(), 42, "swapped first");
+}
+
+test bag_of_strings {
+    mut Bag<string> words = Bag<string> { items: [] };
+    words.Add("one");
+    words.Add("two");
+    Testing.Assert.Equal(words.Size(), 2_i64, "two words");
+    Testing.Assert.Equal(words.Last(), "two", "last added");
+}

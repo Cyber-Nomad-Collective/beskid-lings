@@ -1,0 +1,41 @@
+// hosts2
+//
+// A host can build on another: `host AppHost() : BaseHost { ... }` starts from
+// the registrations of `BaseHost`. A registration for the same contract in the
+// child replaces the parent's one, so an app can swap one service.
+//
+// Lifetimes: `single` makes one instance for the whole run; `transient` makes
+// a new one each time something asks. A child may replace the implementation,
+// but it must keep the lifetime the parent chose.
+
+pub contract Clock {
+    i64 Now();
+}
+
+type SystemClock : Clock {
+    pub i64 Now() {
+        return 1_i64;
+    }
+}
+
+type FixedClock : Clock {
+    pub i64 Now() {
+        return 42_i64;
+    }
+}
+
+host BaseHost() {
+    registry {
+        single SystemClock for Clock;
+    }
+}
+
+host AppHost() : BaseHost {
+    registry {
+        single FixedClock for Clock;
+    }
+}
+
+test child_host_replaces_the_clock {
+    launch AppHost();
+}

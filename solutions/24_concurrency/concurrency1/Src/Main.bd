@@ -1,0 +1,48 @@
+// concurrency1
+//
+// Fan-out, fan-in: start one fiber per job, let each send its result to a
+// shared channel, then collect. A fiber runs only when the current one waits,
+// so before reading the channel without waiting (`TryReceive`), `Join` every
+// worker: then all results are in the channel.
+
+use Concurrency.Channel;
+use Concurrency.Fiber;
+use Concurrency.TryResult;
+use Core.Collections.List;
+use Core.Results;
+
+unit Worker(Channel<i64> results, i64 job) {
+    Channel.Send<i64>(results, job * job);
+}
+
+i64 SumOfSquares(i64 jobs) {
+    Channel<i64> results = Channel.Create<i64>();
+    mut List<Fiber<unit>> workers = List.New<Fiber<unit>>();
+    mut i64 job = 1_i64;
+    while job <= jobs {
+        i64 current = job;
+        workers = workers.Push(spawn (() => Worker(results, current)));
+        job = job + 1_i64;
+    }
+    mut i64 index = 0_i64;
+    while index < workers.Count() {
+        match workers.Get(index) {
+            Result::Ok(worker) => { worker.Join(); },
+            Result::Error(_) => {},
+        };
+        index = index + 1_i64;
+    }
+    mut i64 total = 0_i64;
+    mut bool more = true;
+    while more {
+        match Channel.TryReceive<i64>(results) {
+            TryResult::Ok(value) => { total = total + value; },
+            _ => { more = false; },
+        };
+    }
+    return total;
+}
+
+test four_workers {
+    Testing.Assert.Equal(SumOfSquares(4_i64), 30_i64, "1 + 4 + 9 + 16");
+}

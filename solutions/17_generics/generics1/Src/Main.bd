@@ -1,0 +1,58 @@
+// generics1
+//
+// A generic function works for many types. Its type parameters follow the
+// name in angle brackets: `T FirstOr<T>(T[] values, T fallback)`. The caller
+// usually does not write `T`; the compiler infers it from the arguments.
+// `where T: Named` limits `T` to types that conform to the contract `Named`,
+// so the body may call `Name()` on a `T`.
+
+use Core.Collections.Array;
+
+pub contract Named {
+    string Name();
+}
+
+type Cat : Named {
+    string nickname,
+
+    pub string Name() {
+        return this.nickname;
+    }
+}
+
+T FirstOr<T>(T[] values, T fallback) {
+    if Array.Len<T>(values) == 0_i64 {
+        return fallback;
+    }
+    return values[0];
+}
+
+i64 CountEqual<T>(T[] values, T target) {
+    mut i64 count = 0_i64;
+    mut i64 index = 0_i64;
+    while index < Array.Len<T>(values) {
+        if values[index] == target {
+            count = count + 1_i64;
+        }
+        index = index + 1_i64;
+    }
+    return count;
+}
+
+string Label<T>(T item) where T: Named {
+    return "<${item.Name()}>";
+}
+
+test first_or_works_for_numbers_and_strings {
+    i32[] numbers = [7, 8];
+    Testing.Assert.Equal(FirstOr(numbers, 0), 7, "first number");
+    Testing.Assert.Equal(FirstOr<string>([], "none"), "none", "empty array gives the fallback");
+}
+
+test count_equal {
+    Testing.Assert.Equal(CountEqual(["a", "b", "a"], "a"), 2_i64, "two a");
+}
+
+test label_uses_the_contract {
+    Testing.Assert.Equal(Label(Cat { nickname: "Mruczek" }), "<Mruczek>", "label");
+}

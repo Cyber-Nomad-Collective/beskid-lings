@@ -1,0 +1,40 @@
+// serialization1
+//
+// `[Serialize]` on a type asks the compiler to generate the code that turns
+// it into text and back. The text format here is BSOL, Beskid's own data
+// format. Writing needs a registry of the shapes involved; reading needs only
+// the target type: `Serialization.Read<Point>(text, limits)`.
+
+use Core.Bsol.Serialization;
+use Core.Results;
+use Core.Serialization.Descriptors;
+use Core.Serialization.Limits;
+use Core.Serialization.Registry;
+
+[Serialize]
+pub type Point {
+    pub i32 x,
+    pub i32 y,
+}
+
+string Save(Point value) {
+    Registry.ShapeRegistry table = Registry.Create();
+    Registry.RegisterCompiled<Point>(table, 1048576_i64, 8388608_i64, 100000_i64);
+    return match Serialization.WriteTyped<Point>(value, Descriptors.CompiledShape<Point>().id, table, Limits.DefaultLimits()) {
+        Result::Ok(text) => text,
+        Result::Error(_) => "",
+    };
+}
+
+Point Load(string text) {
+    return match Serialization.Read<Point>(text, Limits.DefaultLimits()) {
+        Result::Ok(point) => point,
+        Result::Error(_) => Point { x: -1, y: -1 },
+    };
+}
+
+test point_round_trips {
+    Point loaded = Load(Save(Point { x: 3, y: 4 }));
+    Testing.Assert.Equal(loaded.x, 3, "x survives");
+    Testing.Assert.Equal(loaded.y, 4, "y survives");
+}

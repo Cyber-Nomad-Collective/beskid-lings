@@ -1,0 +1,41 @@
+// hosts1
+//
+// Beskid wires an application together with a `host`. Its `registry` lists
+// the services: `single PoliteGreeter for Greeter;` says "whenever someone
+// needs a `Greeter`, give them the one `PoliteGreeter`". A type asks for a
+// service with an `inject` field. `launch AppHost();` starts the host.
+//
+// The compiler checks the wiring: every `inject` must find a registration.
+// Note: in Beskid 0.6.6 the compiler checks the wiring, but `startup`, `init`
+// and `dispose` hooks do not run yet. This lesson is about the wiring.
+//
+// TODO: `Reception` injects a `Greeter`, but the host registers none. Register
+// `PoliteGreeter` as the `Greeter`.
+
+contract Greeter {
+    string Greet(string name);
+}
+
+type PoliteGreeter : Greeter {
+    pub string Greet(string name) {
+        return "Good morning, ${name}.";
+    }
+}
+
+type Reception {
+    inject Greeter greeter,
+
+    pub string Welcome(string name) {
+        return this.greeter.Greet(name);
+    }
+}
+
+host AppHost() {
+    registry {
+        single Reception;
+    }
+}
+
+test host_wiring_compiles_and_launches {
+    launch AppHost();
+}

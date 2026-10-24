@@ -1,0 +1,65 @@
+// network1
+//
+// A TCP echo over the loopback address 127.0.0.1. The server listens on port
+// 0, which asks the system for any free port; `LocalAddress()` tells which
+// one it got. The server runs in its own fiber, so the client in the test can
+// connect at the same time. Network calls return `Result`; `?` passes a
+// `NetworkError` up.
+
+use Concurrency.Fiber;
+use Core.Bytes.Slice;
+use Core.IO;
+use Core.Optional.Option;
+use Core.Results;
+use Core.Time.Deadline;
+use Network.Errors;
+use Network.Tcp.TcpListener;
+use Network.Tcp.TcpStream;
+use Network.Types;
+
+/// Accepts one client and sends back the three bytes it receives.
+Result<unit, NetworkError> EchoOnce(TcpListener listener) {
+    TcpStream client = listener.Accept(Option.Empty<Deadline>())?;
+    u8[] buffer = Slice.New(3_i64);
+    IO.ReadExact(client, buffer, 0_i64, 3_i64);
+    IO.WriteAll(client, buffer, 0_i64, 3_i64);
+    client.Close();
+    listener.Close()?;
+    return Result::Ok(());
+}
+
+unit Serve(TcpListener listener) {
+    EchoOnce(listener);
+}
+
+/// Starts the echo server, sends three bytes and returns the last byte echoed back.
+Result<u8, NetworkError> RoundTrip() {
+    SocketAddress any = SocketAddress { address: IpAddress::V4(127_u8, 0_u8, 0_u8, 1_u8), port: Network.Types.PortBytes(0_u8, 0_u8) };
+    TcpListener listener = TcpListener.Bind(any, 8_i64)?;
+    SocketAddress address = listener.LocalAddress()?;
+    Fiber<unit> server = spawn (() => Serve(listener));
+    TcpStream connection = TcpStream.Connect(address, Network.Types.DefaultSocketOptions(), Option.Empty<Deadline>())?;
+    u8[] message = [1_u8, 2_u8, 3_u8];
+    IO.WriteAll(connection, message, 0_i64, 3_i64);
+    u8[] reply = Slice.New(3_i64);
+    IO.ReadExact(connection, reply, 0_i64, 3_i64);
+    connection.Close();
+    server.Join();
+    return Result::Ok(reply[2]);
+}
+
+u8 Scenario() {
+    return match RoundTrip() {
+        Result::Ok(last) => last,
+        Result::Error(_) => 0_u8,
+    };
+}
+
+test echo_returns_what_was_sent {
+    Fiber<u8> scenario = spawn (() => Scenario());
+    u8 last = match scenario.Join() {
+        Result::Ok(value) => value,
+        Result::Error(_) => 0_u8,
+    };
+    Testing.Assert.Equal(last, 3_u8, "the third byte comes back");
+}

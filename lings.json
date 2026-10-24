@@ -98,6 +98,54 @@
       "dir": "16_isolates/isolates1",
       "mode": "test",
       "hint": "Remove the `counted` variable. Return `UpTo(count).Parallel().Where(...).Map((x) => 1_i64).Reduce(0_i64, SumI64 { })`."
+    },
+    {
+      "name": "generics1",
+      "dir": "17_generics/generics1",
+      "mode": "test",
+      "hint": "Write `<T>` after the name: `T FirstOr<T>(...)`. For `Label`, add `where T: Named` before the opening brace."
+    },
+    {
+      "name": "generics2",
+      "dir": "18_generic_types/generics2",
+      "mode": "test",
+      "hint": "`Second` must return `B`, the type of `second`. `Swapped` returns `Pair<B, A>`, so its `first` is `this.second` and its `second` is `this.first`."
+    },
+    {
+      "name": "hosts1",
+      "dir": "19_hosts/hosts1",
+      "mode": "test",
+      "hint": "Add `single PoliteGreeter for Greeter;` as the first line inside `registry { }`."
+    },
+    {
+      "name": "hosts2",
+      "dir": "20_host_inheritance/hosts2",
+      "mode": "test",
+      "hint": "`BaseHost` registers the clock as `single`. Use `single FixedClock for Clock;` in `AppHost` too."
+    },
+    {
+      "name": "json1",
+      "dir": "21_json/json1",
+      "mode": "test",
+      "hint": "Use `Json.AsText(value)` and return the text it gives. Use `Json.Stringify` instead of `Json.Pretty`."
+    },
+    {
+      "name": "serialization1",
+      "dir": "22_serialization/serialization1",
+      "mode": "test",
+      "hint": "Put `[Serialize]` on the line above `pub type Point`."
+    },
+    {
+      "name": "network1",
+      "dir": "23_network/network1",
+      "mode": "test",
+      "hint": "In `RoundTrip`, pass `address` (from `LocalAddress()`) to `TcpStream.Connect`, not `any`."
+    },
+    {
+      "name": "concurrency1",
+      "dir": "24_concurrency/concurrency1",
+      "mode": "test",
+      "hint": "Before the `TryReceive` loop, walk `workers` with an index and call `Join()` on each one, as the solution of exercise 15 joins its producer."
     }
   ]
 }

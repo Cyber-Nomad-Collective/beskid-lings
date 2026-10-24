@@ -1,0 +1,47 @@
+// json1
+//
+// `Core.Json` reads and writes JSON. `Json.Parse(text)` returns a `Result`
+// with a `JsonValue`. `Json.Get(object, "key")` returns an `Option`, because
+// the key may be missing; `Json.AsText` and `Json.AsNumber` turn a value into
+// a `string` or an `f64`, again as `Option`. To build JSON, start from
+// `Json.EmptyObject()` and add members with `Json.With`; `Json.Stringify`
+// writes compact text.
+
+use Core.Json;
+use Core.Json.JsonError;
+use Core.Json.JsonValue;
+use Core.Optional.Option;
+use Core.Results;
+
+/// The "name" of a user document, or "unknown" when it is missing or not text.
+string UserName(string document) {
+    Result<JsonValue, JsonError> parsed = Json.Parse(document);
+    return match parsed {
+        Result::Error(_) => "unknown",
+        Result::Ok(root) => match Json.Get(root, "name") {
+            Option::None => "unknown",
+            Option::Some(value) => match Json.AsText(value) {
+                Option::None => "unknown",
+                Option::Some(name) => name,
+            },
+        },
+    };
+}
+
+string MakeUser(string name) {
+    JsonValue user = Json.With(Json.EmptyObject(), "name", JsonValue::Text(name));
+    return Json.Stringify(user);
+}
+
+test reads_the_name {
+    Testing.Assert.Equal(UserName("{\"name\": \"Ada\", \"age\": 36}"), "Ada", "name field");
+}
+
+test missing_name_is_unknown {
+    Testing.Assert.Equal(UserName("{\"age\": 36}"), "unknown", "no name field");
+    Testing.Assert.Equal(UserName("not json"), "unknown", "invalid JSON");
+}
+
+test builds_a_user {
+    Testing.Assert.Equal(MakeUser("Bob"), "{\"name\":\"Bob\"}", "compact JSON");
+}
