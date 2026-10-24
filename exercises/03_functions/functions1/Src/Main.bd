@@ -1,0 +1,22 @@
+// functions1
+//
+// A function declares its return type, its name, then typed parameters:
+// `i32 Add(i32 left, i32 right)`. A function that returns nothing returns `unit`.
+//
+// TODO: `SumOfSquares` is missing its second parameter. Add it.
+
+i32 Square(i32 value) {
+    return value * value;
+}
+
+i32 SumOfSquares(i32 left) {
+    return Square(left) + Square(right);
+}
+
+test square_of_four {
+    Testing.Assert.Equal(Square(4), 16, "4 * 4");
+}
+
+test sum_of_squares {
+    Testing.Assert.Equal(SumOfSquares(3, 4), 25, "9 + 16");
+}

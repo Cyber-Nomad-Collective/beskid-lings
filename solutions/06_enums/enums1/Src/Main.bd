@@ -1,0 +1,25 @@
+// enums1
+//
+// An `enum` lists the shapes a value can take. A variant can carry data:
+// `Circle(i32 radius)`. `match` picks the arm for the variant and binds its data.
+// Every variant needs an arm.
+
+enum Shape {
+    Square(i32 side),
+    Rectangle(i32 width, i32 height),
+    Triangle(i32 base, i32 height),
+}
+
+i32 Area(Shape shape) {
+    return match shape {
+        Shape::Square(side) => side * side,
+        Shape::Rectangle(width, height) => width * height,
+        Shape::Triangle(base, height) => base * height / 2,
+    };
+}
+
+test areas {
+    Testing.Assert.Equal(Area(Shape::Square(3)), 9, "square");
+    Testing.Assert.Equal(Area(Shape::Rectangle(2, 5)), 10, "rectangle");
+    Testing.Assert.Equal(Area(Shape::Triangle(4, 3)), 6, "triangle");
+}

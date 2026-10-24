@@ -1,0 +1,39 @@
+// results1
+//
+// Beskid has no exceptions. A function that can fail returns `Result<T, E>`:
+// `Result::Ok(value)` or `Result::Error(error)`. The caller matches on it,
+// or writes `?` to return the error to its own caller.
+
+use Core.Results;
+
+Result<i32, string> Divide(i32 dividend, i32 divisor) {
+    if divisor == 0 {
+        return Result::Error("cannot divide by zero");
+    }
+    return Result::Ok(dividend / divisor);
+}
+
+/// Divides twice; the first error stops the calculation.
+Result<i32, string> Quarter(i32 value) {
+    i32 half = Divide(value, 2)?;
+    return Divide(half, 2);
+}
+
+string Describe(Result<i32, string> result) {
+    return match result {
+        Result::Ok(value) => "ok ${value}",
+        Result::Error(message) => "error: ${message}",
+    };
+}
+
+test divide_ok {
+    Testing.Assert.Equal(Describe(Divide(10, 2)), "ok 5", "10 / 2");
+}
+
+test divide_by_zero {
+    Testing.Assert.Equal(Describe(Divide(1, 0)), "error: cannot divide by zero", "1 / 0");
+}
+
+test quarter_uses_question_mark {
+    Testing.Assert.Equal(Describe(Quarter(20)), "ok 5", "20 / 2 / 2");
+}

@@ -1,0 +1,17 @@
+// variables1
+//
+// Beskid writes the type first, then the name: `i32 count = 0;`.
+// `let count = 0;` lets the compiler infer the type instead.
+// A value is immutable unless you mark it `mut`.
+
+i32 CountToThree() {
+    mut i32 count = 0;
+    count = count + 1;
+    count = count + 1;
+    count = count + 1;
+    return count;
+}
+
+test counts_to_three {
+    Testing.Assert.Equal(CountToThree(), 3, "count should reach 3");
+}

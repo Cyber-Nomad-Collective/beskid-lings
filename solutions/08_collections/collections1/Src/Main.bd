@@ -1,0 +1,39 @@
+// collections1
+//
+// `i32[]` is an array of i32. Write one as `[1, 2, 3]`, read an element with
+// `values[0]`, and get the length with `Array.Len<i32>(values)`.
+// `for value in values` visits every element in order.
+
+use Core.Collections.Array;
+
+i32 Sum(i32[] values) {
+    mut i32 total = 0;
+    for value in values {
+        total = total + value;
+    }
+    return total;
+}
+
+i32 Largest(i32[] values) {
+    mut i32 largest = values[0];
+    for value in values {
+        if value > largest {
+            largest = value;
+        }
+    }
+    return largest;
+}
+
+test sum_of_array {
+    Testing.Assert.Equal(Sum([1, 2, 3, 4]), 10, "1 + 2 + 3 + 4");
+}
+
+test largest_element {
+    Testing.Assert.Equal(Largest([3, 9, 2]), 9, "9 is the largest");
+    Testing.Assert.Equal(Largest([-3, -9, -2]), -2, "-2 is the largest");
+}
+
+test length_of_array {
+    i32[] values = [5, 6, 7];
+    Testing.Assert.Equal(Array.Len<i32>(values), 3_i64, "three elements");
+}

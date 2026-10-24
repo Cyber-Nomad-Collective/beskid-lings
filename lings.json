@@ -8,6 +8,48 @@
       "dir": "01_intro/intro1",
       "mode": "test",
       "hint": "The test calls Answer() and expects 42. Change the value after `return`."
+    },
+    {
+      "name": "variables1",
+      "dir": "02_variables/variables1",
+      "mode": "test",
+      "hint": "The compiler says `count` is immutable. Put `mut` in front of the declaration: `mut i32 count = 0;`."
+    },
+    {
+      "name": "functions1",
+      "dir": "03_functions/functions1",
+      "mode": "test",
+      "hint": "The body already uses `right`, and the test calls `SumOfSquares(3, 4)` with two numbers. Add `i32 right` to the parameter list."
+    },
+    {
+      "name": "control1",
+      "dir": "04_control/control1",
+      "mode": "test",
+      "hint": "Add an `else if value == 0` branch that returns \"zero\". For the sum, remember that `range(1, limit)` stops before `limit`."
+    },
+    {
+      "name": "types1",
+      "dir": "05_types/types1",
+      "mode": "test",
+      "hint": "Add `i32 height,` after `i32 width,`, then multiply `this.width` by `this.height` in `Area`."
+    },
+    {
+      "name": "enums1",
+      "dir": "06_enums/enums1",
+      "mode": "test",
+      "hint": "The compiler names the variant that has no arm. A triangle's area is `base * height / 2`."
+    },
+    {
+      "name": "results1",
+      "dir": "07_results/results1",
+      "mode": "test",
+      "hint": "In `Divide`, return `Result::Error(\"cannot divide by zero\")` when `divisor == 0`. In `Quarter`, write `?` after `Divide(value, 2)` to get the i32 out of the Result."
+    },
+    {
+      "name": "collections1",
+      "dir": "08_collections/collections1",
+      "mode": "test",
+      "hint": "`Sum` needs `total = total + value;` inside the loop. For `Largest`, start from the first element, `values[0]`, instead of 0."
     }
   ]
 }
