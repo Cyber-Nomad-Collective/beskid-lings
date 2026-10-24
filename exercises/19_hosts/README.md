@@ -14,7 +14,7 @@ host AppHost() {
 - `single X for C;` - one `X`, given to everyone who needs a `C`.
 - `transient X for C;` - a new `X` each time.
 - `single X;` - register `X` as itself.
-- `inject C name,` - a field that the host fills in.
+- `inject C name;` - a field that the host fills in.
 - `launch AppHost();` - start the host; one launch per program.
 
 The compiler resolves the whole graph: an `inject` with no registration is a

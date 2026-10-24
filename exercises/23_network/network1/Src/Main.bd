@@ -58,7 +58,7 @@ u8 Scenario() {
     };
 }
 
-test echo_returns_what_was_sent {
+test EchoReturnsWhatWasSent {
     Fiber<u8> scenario = spawn (() => Scenario());
     u8 last = match scenario.Join() {
         Result::Ok(value) => value,

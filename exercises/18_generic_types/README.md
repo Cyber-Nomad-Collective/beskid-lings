@@ -4,8 +4,8 @@ Types take type parameters too:
 
 ```
 type Pair<A, B> {
-    A first,
-    B second,
+    A first;
+    B second;
 }
 
 Pair<string, i32> age = Pair<string, i32> { first: "age", second: 42 };

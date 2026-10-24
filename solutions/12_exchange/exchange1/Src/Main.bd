@@ -5,7 +5,7 @@
 // `exchange(place, move value)` puts the new value in and gives you the old one.
 
 type Inbox {
-    string[] messages,
+    string[] messages;
 
     /// Empties the inbox and returns the messages it held.
     string[] Drain(mut this) {
@@ -14,7 +14,7 @@ type Inbox {
     }
 }
 
-test drain_returns_old_messages {
+test DrainReturnsOldMessages {
     mut Inbox inbox = Inbox { messages: ["hi", "lunch?"] };
     string[] old = inbox.Drain();
     Testing.Assert.Equal(Core.Collections.Array.Len<string>(old), 2_i64, "two old messages");

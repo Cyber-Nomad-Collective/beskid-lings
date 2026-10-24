@@ -16,7 +16,7 @@ pub contract Named {
 }
 
 type Cat : Named {
-    string nickname,
+    string nickname;
 
     pub string Name() {
         return this.nickname;
@@ -46,16 +46,16 @@ string Label<T>(T item) {
     return "<${item.Name()}>";
 }
 
-test first_or_works_for_numbers_and_strings {
+test FirstOrWorksForNumbersAndStrings {
     i32[] numbers = [7, 8];
     Testing.Assert.Equal(FirstOr(numbers, 0), 7, "first number");
     Testing.Assert.Equal(FirstOr<string>([], "none"), "none", "empty array gives the fallback");
 }
 
-test count_equal {
+test CountEqualFindsTwo {
     Testing.Assert.Equal(CountEqual(["a", "b", "a"], "a"), 2_i64, "two a");
 }
 
-test label_uses_the_contract {
+test LabelUsesTheContract {
     Testing.Assert.Equal(Label(Cat { nickname: "Mruczek" }), "<Mruczek>", "label");
 }

@@ -11,8 +11,8 @@ use Core.Results;
 
 [Copyable]
 type Order {
-    i64 quantity,
-    i64 price,
+    i64 quantity;
+    i64 price;
 }
 
 i64 TotalInParallel(Order first, Order second) {
@@ -29,6 +29,6 @@ i64 TotalInParallel(Order first, Order second) {
     };
 }
 
-test totals_both_orders {
+test TotalsBothOrders {
     Testing.Assert.Equal(TotalInParallel(Order { quantity: 2_i64, price: 10_i64 }, Order { quantity: 1_i64, price: 5_i64 }), 25_i64, "20 + 5");
 }

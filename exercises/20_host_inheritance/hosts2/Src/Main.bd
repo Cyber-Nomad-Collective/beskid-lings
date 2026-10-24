@@ -39,6 +39,6 @@ host AppHost() : BaseHost {
     }
 }
 
-test child_host_replaces_the_clock {
+test ChildHostReplacesTheClock {
     launch AppHost();
 }

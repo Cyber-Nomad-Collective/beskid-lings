@@ -19,7 +19,7 @@ i32 Area(Shape shape) {
     };
 }
 
-test areas {
+test Areas {
     Testing.Assert.Equal(Area(Shape::Square(3)), 9, "square");
     Testing.Assert.Equal(Area(Shape::Rectangle(2, 5)), 10, "rectangle");
     Testing.Assert.Equal(Area(Shape::Triangle(4, 3)), 6, "triangle");

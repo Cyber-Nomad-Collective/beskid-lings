@@ -36,15 +36,15 @@ string MakeUser(string name) {
     return Json.Pretty(user);
 }
 
-test reads_the_name {
+test ReadsTheName {
     Testing.Assert.Equal(UserName("{\"name\": \"Ada\", \"age\": 36}"), "Ada", "name field");
 }
 
-test missing_name_is_unknown {
+test MissingNameIsUnknown {
     Testing.Assert.Equal(UserName("{\"age\": 36}"), "unknown", "no name field");
     Testing.Assert.Equal(UserName("not json"), "unknown", "invalid JSON");
 }
 
-test builds_a_user {
+test BuildsAUser {
     Testing.Assert.Equal(MakeUser("Bob"), "{\"name\":\"Bob\"}", "compact JSON");
 }
