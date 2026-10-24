@@ -1,0 +1,13 @@
+{
+  "formatVersion": 1,
+  "welcome": "Welcome to beskid-lings. Fix each exercise until it compiles and its tests pass. Type h for a hint, l for the list, q to quit.",
+  "final": "You finished every exercise in this milestone. Tell us what was hard.",
+  "exercises": [
+    {
+      "name": "intro1",
+      "dir": "01_intro/intro1",
+      "mode": "test",
+      "hint": "The test calls Answer() and expects 42. Change the value after `return`."
+    }
+  ]
+}

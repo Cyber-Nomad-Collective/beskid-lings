@@ -1,0 +1,27 @@
+// beskid-lings runner.
+//
+// Milestone 0: check one exercise with `beskid -q test --json` and report
+// whether it passes. Next steps: read lings.json, keep .lings-state, watch.
+
+use Core.Process;
+use Core.Results;
+
+/// Runs `beskid -q test` on one exercise project and returns true when it passes.
+/// Process.Run does not search PATH, so `/usr/bin/env` finds `beskid` for us.
+bool CheckExercise(string projectDir) {
+    Result<ProcessOutput, ProcessError> ran = Process.Run("/usr/bin/env", ["beskid", "-q", "test", "--project", projectDir, "--json"]);
+    return match ran {
+        Result::Error(error) => false,
+        Result::Ok(output) => output.exitCode == 0_i64,
+    };
+}
+
+i32 Main() {
+    string dir = "exercises/01_intro/intro1";
+    if CheckExercise(dir) {
+        Core.Output.WriteLine("PASS ${dir}");
+        return 0;
+    }
+    Core.Output.WriteLine("FAIL ${dir}");
+    return 1;
+}

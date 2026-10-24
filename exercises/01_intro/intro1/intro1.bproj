@@ -1,0 +1,9 @@
+intro1 {
+  name = "intro1"
+  version = "0.1.0"
+}
+
+target "Check" {
+  kind = Test
+  entry = "Main.bd"
+}
