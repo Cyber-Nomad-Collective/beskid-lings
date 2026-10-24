@@ -1,0 +1,39 @@
+// Checking one exercise with the beskid CLI.
+
+use Core.Process;
+use Core.Results;
+use Catalog;
+
+/// Outcome of checking one exercise; `output` holds the compiler and test text.
+pub type CheckResult {
+    pub bool passed,
+    pub string output,
+}
+
+/// The exercise's project folder, relative to the course root.
+pub string ProjectDir(Exercise exercise) {
+    return "exercises/${exercise.dir}";
+}
+
+/// The file the learner edits.
+pub string SourcePath(Exercise exercise) {
+    return "${ProjectDir(exercise)}/Src/Main.bd";
+}
+
+/// Runs `beskid -q test` (or `check` for mode "check") on the exercise project.
+pub CheckResult Run(Exercise exercise) {
+    mut string command = "test";
+    if exercise.mode == "check" {
+        command = "check";
+    }
+    // Process.Run does not search PATH, so `/usr/bin/env` finds `beskid` for us.
+    Result<ProcessOutput, ProcessError> ran = Process.Run("/usr/bin/env", ["beskid", "-q", command, "--project", ProjectDir(exercise)]);
+    // A non-zero exit arrives as ProcessError::ExitCode, not as Ok with exitCode != 0.
+    return match ran {
+        Result::Ok(output) => CheckResult { passed: output.exitCode == 0_i64, output: output.stdout + output.stderr },
+        Result::Error(error) => match error {
+            ProcessError::ExitCode(code, stderr) => CheckResult { passed: false, output: stderr },
+            _ => CheckResult { passed: false, output: "could not start `beskid`; is it on PATH?" },
+        },
+    };
+}
