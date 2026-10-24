@@ -1,0 +1,24 @@
+// Opening an exercise file in the learner's editor.
+//
+// Order of preference:
+//   1. LINGS_EDITOR, a command that takes the file path ("none" turns opening off);
+//   2. the `code` command (VS Code), reusing the current window;
+//   3. inside the VS Code terminal on macOS, the VS Code app through `open -a`;
+//   4. otherwise nothing: the runner already prints the path to edit.
+
+use Core.Process;
+use Core.Results;
+
+pub unit Open(string path) {
+    // The script exits 0 whatever happens: failing to open a file must not stop the course.
+    string script = "if [ \"$LINGS_EDITOR\" = none ]; then exit 0; "
+        + "elif [ -n \"$LINGS_EDITOR\" ]; then $LINGS_EDITOR \"$1\"; "
+        + "elif command -v code >/dev/null 2>&1; then code -r \"$1\"; "
+        + "elif [ \"$TERM_PROGRAM\" = vscode ] && [ \"$(uname)\" = Darwin ]; then open -a \"Visual Studio Code\" \"$1\"; "
+        + "fi; exit 0";
+    Result<ProcessOutput, ProcessError> ran = Process.Run("/bin/sh", ["-c", script, "sh", path]);
+    match ran {
+        Result::Ok(output) => {},
+        Result::Error(error) => {},
+    };
+}

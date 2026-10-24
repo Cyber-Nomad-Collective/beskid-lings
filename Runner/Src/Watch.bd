@@ -1,4 +1,5 @@
-// Watch mode: rerun the current exercise on save and answer single-letter commands.
+// Watch mode: rerun the current exercise on save, open the next one in the
+// editor when it becomes current, and answer single-letter commands.
 //
 // Three fibers share one event channel:
 //   - the key fiber sends "key:<line>" for every line typed (h, l, r, q + Enter);
@@ -21,6 +22,7 @@ use Core.Syscall.SyscallError;
 use Core.Time;
 use Catalog;
 use Checker;
+use Editor;
 use Report;
 use State;
 
@@ -53,6 +55,7 @@ i32 Session(Course course) {
     mut string[] done = State.Load();
     i64 total = Array.Len<Exercise>(course.exercises);
     mut i64 index = State.CurrentIndex(course, done);
+    mut i64 opened = -1_i64;
     mut bool check = true;
     while index < total {
         Exercise exercise = course.exercises[index];
@@ -68,6 +71,11 @@ i32 Session(Course course) {
             Report.Failure(exercise, result, index, total);
             Commands();
             check = false;
+            // Open each exercise once, the first time it is the one to work on.
+            if opened != index {
+                Editor.Open(Checker.SourcePath(exercise));
+                opened = index;
+            }
         }
         string event = NextEvent(events);
         if event == "key:q" || event == "closed" {

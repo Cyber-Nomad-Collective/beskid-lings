@@ -29,6 +29,11 @@ While it runs, type a letter and press Enter:
 | `r` | check the current exercise again |
 | `q` | quit; progress stays in `.lings-state` |
 
+When an exercise becomes the current one, the runner opens it in your editor:
+with the `code` command if you have it, otherwise, in the VS Code terminal on
+macOS, in the VS Code app. Set `LINGS_EDITOR` to use another editor (for
+example `LINGS_EDITOR=zed`), or `LINGS_EDITOR=none` to turn this off.
+
 `-q` keeps beskid from printing every build step before the course output.
 
 You can also check one exercise by hand:
