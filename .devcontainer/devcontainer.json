@@ -1,26 +1,23 @@
 {
   "name": "beskid-lings",
   "image": "mcr.microsoft.com/devcontainers/base:ubuntu-24.04",
-  "containerEnv": {
-    "BESKID_CLI_TAG": "cli-v0.6.7",
-    "BESKID_LSP_TAG": "lsp-v0.6.7"
-  },
+  "remoteUser": "vscode",
   "remoteEnv": {
-    "PATH": "/home/vscode/.beskid/bin:${containerEnv:PATH}"
+    "PATH": "/home/vscode/.local/bin:${containerEnv:PATH}"
   },
   "postCreateCommand": "bash .devcontainer/install-beskid.sh",
-  "postAttachCommand": "bash .devcontainer/welcome.sh",
+  "postAttachCommand": "bash .devcontainer/attach.sh",
   "customizations": {
     "vscode": {
-      "extensions": [
-        "beskid-lang.beskid-vscode"
-      ]
+      "settings": {
+        "beskid.cli.path": "/home/vscode/.local/bin/beskid",
+        "beskid.lsp.server.path": "/home/vscode/.beskid/toolchains/beskid-0.6.6-x86_64-unknown-linux-gnu/bin/beskid_lsp"
+      }
     },
     "codespaces": {
       "openFiles": [
         "README.md"
       ]
     }
-  },
-  "remoteUser": "vscode"
+  }
 }
