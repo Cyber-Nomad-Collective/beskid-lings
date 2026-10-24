@@ -1,27 +1,143 @@
 // beskid-lings runner.
 //
-// Milestone 0: check one exercise with `beskid -q test --json` and report
-// whether it passes. Next steps: read lings.json, keep .lings-state, watch.
+// Milestone 1: read lings.json, check the exercises in order, and stop at the
+// first one that does not pass. Next steps: keep .lings-state, watch mode.
 
+use Core.Collections.Array;
+use Core.FS;
+use Core.FS.FsError;
+use Core.Json;
+use Core.Json.JsonError;
+use Core.Json.JsonValue;
+use Core.Optional.Option;
 use Core.Process;
 use Core.Results;
 
-/// Runs `beskid -q test` on one exercise project and returns true when it passes.
+/// One entry of `exercises` in lings.json.
+type Exercise {
+    string name,
+    string dir,
+    string mode,
+    string hint,
+}
+
+/// The parts of lings.json the runner uses.
+type Course {
+    string welcome,
+    string final,
+    Exercise[] exercises,
+}
+
+/// Outcome of checking one exercise; `output` holds the compiler and test text.
+type CheckResult {
+    bool passed,
+    string output,
+}
+
+/// Returns the text member `key` of `object`, or `fallback` when it is missing.
+string TextOr(JsonValue object, string key, string fallback) {
+    return match Json.Get(object, key) {
+        Option::None => fallback,
+        Option::Some(value) => match Json.AsText(value) {
+            Option::None => fallback,
+            Option::Some(text) => text,
+        },
+    };
+}
+
+/// Reads and parses lings.json; the error is a message for the learner.
+Result<Course, string> LoadCourse(string path) {
+    Result<string, FsError> read = FS.ReadAllText(path);
+    string text = match read {
+        Result::Error(error) => "",
+        Result::Ok(content) => content,
+    };
+    if text == "" {
+        return Result::Error("cannot read ${path}; run the runner from the beskid-lings folder");
+    }
+    Result<JsonValue, JsonError> parsed = Json.Parse(text);
+    JsonValue root = match parsed {
+        Result::Error(error) => Json.EmptyObject(),
+        Result::Ok(value) => value,
+    };
+    JsonValue list = match Json.Get(root, "exercises") {
+        Option::None => Json.EmptyList(),
+        Option::Some(value) => value,
+    };
+    i64 count = Json.Length(list);
+    if count == 0_i64 {
+        return Result::Error("${path} is not valid JSON or has no exercises");
+    }
+    mut Exercise[] exercises = Array.Empty<Exercise>();
+    mut i64 index = 0_i64;
+    while index < count {
+        match Json.At(list, index) {
+            Option::None => {},
+            Option::Some(entry) => {
+                Array.Append<Exercise>(exercises, Exercise {
+                    name: TextOr(entry, "name", ""),
+                    dir: TextOr(entry, "dir", ""),
+                    mode: TextOr(entry, "mode", "test"),
+                    hint: TextOr(entry, "hint", "No hint for this one."),
+                });
+            },
+        };
+        index = index + 1_i64;
+    }
+    return Result::Ok(Course {
+        welcome: TextOr(root, "welcome", ""),
+        final: TextOr(root, "final", ""),
+        exercises: exercises,
+    });
+}
+
+/// Runs `beskid -q test` (or `check`) on one exercise project.
 /// Process.Run does not search PATH, so `/usr/bin/env` finds `beskid` for us.
-bool CheckExercise(string projectDir) {
-    Result<ProcessOutput, ProcessError> ran = Process.Run("/usr/bin/env", ["beskid", "-q", "test", "--project", projectDir, "--json"]);
+CheckResult CheckExercise(Exercise exercise) {
+    string projectDir = "exercises/${exercise.dir}";
+    mut string command = "test";
+    if exercise.mode == "check" {
+        command = "check";
+    }
+    Result<ProcessOutput, ProcessError> ran = Process.Run("/usr/bin/env", ["beskid", "-q", command, "--project", projectDir]);
+    // A non-zero exit arrives as ProcessError::ExitCode, not as Ok with exitCode != 0.
     return match ran {
-        Result::Error(error) => false,
-        Result::Ok(output) => output.exitCode == 0_i64,
+        Result::Ok(output) => CheckResult { passed: output.exitCode == 0_i64, output: output.stdout + output.stderr },
+        Result::Error(error) => match error {
+            ProcessError::ExitCode(code, stderr) => CheckResult { passed: false, output: stderr },
+            _ => CheckResult { passed: false, output: "could not start `beskid`; is it on PATH?" },
+        },
     };
 }
 
 i32 Main() {
-    string dir = "exercises/01_intro/intro1";
-    if CheckExercise(dir) {
-        Core.Output.WriteLine("PASS ${dir}");
-        return 0;
+    Course course = match LoadCourse("lings.json") {
+        Result::Error(message) => Course { welcome: message, final: "", exercises: Array.Empty<Exercise>() },
+        Result::Ok(loaded) => loaded,
+    };
+    i64 total = Array.Len<Exercise>(course.exercises);
+    if total == 0_i64 {
+        Core.Output.WriteLine("error: ${course.welcome}");
+        return 2;
     }
-    Core.Output.WriteLine("FAIL ${dir}");
-    return 1;
+    Core.Output.WriteLine(course.welcome);
+    Core.Output.WriteLineEmpty();
+    mut i64 index = 0_i64;
+    while index < total {
+        Exercise exercise = course.exercises[index];
+        CheckResult result = CheckExercise(exercise);
+        if !result.passed {
+            Core.Output.WriteLine("[${index}/${total}] done. Next: ${exercise.name}");
+            Core.Output.WriteLineEmpty();
+            Core.Output.WriteLine(result.output);
+            Core.Output.WriteLine("Edit exercises/${exercise.dir}/Src/Main.bd");
+            Core.Output.WriteLine("Hint: ${exercise.hint}");
+            return 1;
+        }
+        Core.Output.WriteLine("done ${exercise.name}");
+        index = index + 1_i64;
+    }
+    Core.Output.WriteLineEmpty();
+    Core.Output.WriteLine("[${total}/${total}] done. ${course.final}");
+    return 0;
 }
