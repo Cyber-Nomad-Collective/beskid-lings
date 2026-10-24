@@ -38,12 +38,12 @@ i64 Received(TryResult<i64, ChannelError> result) {
     };
 }
 
-test fiber_result_after_join {
+test FiberResultAfterJoin {
     Fiber<i64> worker = spawn (() => SlowSquare(7_i64));
     Testing.Assert.Equal(Joined(worker.Join()), 49_i64, "7 * 7");
 }
 
-test two_values_through_a_channel {
+test TwoValuesThroughAChannel {
     Channel<i64> numbers = Channel.Create<i64>();
     Fiber<unit> producer = spawn (() => Producer(numbers));
     producer.Join();

@@ -20,7 +20,7 @@ type PoliteGreeter : Greeter {
 }
 
 type Reception {
-    inject Greeter greeter,
+    inject Greeter greeter;
 
     pub string Welcome(string name) {
         return this.greeter.Greet(name);
@@ -34,6 +34,6 @@ host AppHost() {
     }
 }
 
-test host_wiring_compiles_and_launches {
+test HostWiringCompilesAndLaunches {
     launch AppHost();
 }

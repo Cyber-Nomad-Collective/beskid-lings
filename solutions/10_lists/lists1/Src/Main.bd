@@ -22,7 +22,7 @@ string ItemAt(List<string> items, i64 index) {
     };
 }
 
-test three_items {
+test ThreeItems {
     List<string> items = Shopping();
     Testing.Assert.Equal(items.Count(), 3_i64, "three items");
     Testing.Assert.Equal(ItemAt(items, 2_i64), "apples", "apples come last");

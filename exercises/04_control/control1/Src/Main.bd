@@ -20,12 +20,12 @@ i32 SumUpTo(i32 limit) {
     return total;
 }
 
-test classify_values {
+test ClassifyValues {
     Testing.Assert.Equal(Classify(-5), "negative", "below zero");
     Testing.Assert.Equal(Classify(0), "zero", "zero itself");
     Testing.Assert.Equal(Classify(7), "positive", "above zero");
 }
 
-test sum_up_to_ten {
+test SumUpToTen {
     Testing.Assert.Equal(SumUpTo(10), 55, "1 + 2 + ... + 10");
 }

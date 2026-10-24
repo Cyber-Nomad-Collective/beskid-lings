@@ -13,8 +13,8 @@ use Core.Serialization.Registry;
 
 [Serialize]
 pub type Point {
-    pub i32 x,
-    pub i32 y,
+    pub i32 x;
+    pub i32 y;
 }
 
 string Save(Point value) {
@@ -33,7 +33,7 @@ Point Load(string text) {
     };
 }
 
-test point_round_trips {
+test PointRoundTrips {
     Point loaded = Load(Save(Point { x: 3, y: 4 }));
     Testing.Assert.Equal(loaded.x, 3, "x survives");
     Testing.Assert.Equal(loaded.y, 4, "y survives");

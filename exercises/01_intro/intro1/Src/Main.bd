@@ -13,6 +13,6 @@ i32 Answer() {
     return 41;
 }
 
-test answer_is_forty_two {
+test AnswerIsFortyTwo {
     Testing.Assert.Equal(Answer(), 42, "Answer() should return 42");
 }

@@ -11,17 +11,17 @@ use Core.Results;
 
 /// One entry of `exercises` in lings.json.
 pub type Exercise {
-    pub string name,
-    pub string dir,
-    pub string mode,
-    pub string hint,
+    pub string name;
+    pub string dir;
+    pub string mode;
+    pub string hint;
 }
 
 /// The parts of lings.json the runner uses.
 pub type Course {
-    pub string welcome,
-    pub string final,
-    pub Exercise[] exercises,
+    pub string welcome;
+    pub string final;
+    pub Exercise[] exercises;
 }
 
 /// Reads and parses `path`; the error is a message for the learner.

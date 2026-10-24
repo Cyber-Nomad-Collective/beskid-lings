@@ -7,7 +7,7 @@
 use Core.Collections.Array;
 
 type Archive {
-    i32[] scores,
+    i32[] scores;
 }
 
 /// Takes ownership of `scores` and keeps them in the archive.
@@ -30,6 +30,6 @@ i32 ArchiveAndTotal() {
     return total + i32(Array.Len<i32>(archive.scores));
 }
 
-test total_plus_count {
+test TotalPlusCount {
     Testing.Assert.Equal(ArchiveAndTotal(), 15, "3 + 4 + 5 plus three scores");
 }

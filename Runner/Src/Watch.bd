@@ -4,9 +4,7 @@
 // Three fibers share one event channel:
 //   - the key fiber sends "key:<line>" for every line typed (h, l, r, q + Enter);
 //   - the watcher fiber polls the current exercise file and sends "changed:<path>";
-//   - the session fiber (Session) receives events and drives the course.
-// Main joins the session fiber: in 0.6.6 a Receive that has to wait only parks
-// inside a spawned fiber, not in Main itself.
+//   - the session (Session, on Main) receives events and drives the course.
 
 use Concurrency.Channel;
 use Concurrency.ChannelError;
@@ -28,14 +26,7 @@ use State;
 
 /// Runs watch mode until every exercise is done or the learner types q; returns the exit code.
 pub i32 Run(Course course) {
-    Fiber<i32> session = spawn (() => Session(course));
-    i32 code = match session.Join() {
-        Result::Ok(value) => value,
-        Result::Error(error) => 3,
-    };
-    // The key fiber is still blocked reading stdin; exit without waiting for it.
-    Core.Process.Exit(code);
-    return code;
+    return Session(course);
 }
 
 unit Commands() {

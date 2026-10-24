@@ -1,8 +1,8 @@
 {
   // TEMPORARY: the Beskid extension turns on format-on-save (the intended
-  // behaviour), but the 0.6.6 formatter deletes the comments at the top of a
-  // file, which hold each exercise's instructions. Remove this block once a
-  // build with the 0.6.7 formatter fix is installed.
+  // behaviour). The 0.6.6 formatter deleted header comments (fixed in
+  // 0.6.7-preview.1); preview.1 still rewrites string interpolation `${x}`
+  // into `+` concatenation. Remove this block once that is fixed.
   "[beskid]": {
     "editor.formatOnSave": false
   },

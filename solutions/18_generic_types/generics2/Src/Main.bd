@@ -1,6 +1,6 @@
 // generics2
 //
-// Types can be generic too: `type Pair<A, B> { A first, B second }`.
+// Types can be generic too: `type Pair<A, B> { A first; B second; }`.
 // Inside the type, `A` and `B` stand for whatever types the user picks:
 // `Pair<string, i32> { first: "age", second: 42 }`. Methods use the same
 // names for their parameter and return types.
@@ -8,8 +8,8 @@
 use Core.Collections.Array;
 
 type Pair<A, B> {
-    A first,
-    B second,
+    A first;
+    B second;
 
     pub A First() {
         return this.first;
@@ -25,7 +25,7 @@ type Pair<A, B> {
 }
 
 type Bag<T> {
-    T[] items,
+    T[] items;
 
     pub unit Add(mut this, T value) {
         this.items = Array.Append<T>(this.items, value);
@@ -40,14 +40,14 @@ type Bag<T> {
     }
 }
 
-test pair_keeps_both_types {
+test PairKeepsBothTypes {
     Pair<string, i32> age = Pair<string, i32> { first: "age", second: 42 };
     Testing.Assert.Equal(age.First(), "age", "first");
     Testing.Assert.Equal(age.Second(), 42, "second");
     Testing.Assert.Equal(age.Swapped().First(), 42, "swapped first");
 }
 
-test bag_of_strings {
+test BagOfStrings {
     mut Bag<string> words = Bag<string> { items: [] };
     words.Add("one");
     words.Add("two");

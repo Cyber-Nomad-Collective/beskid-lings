@@ -13,10 +13,10 @@ i32 SumOfSquares(i32 left) {
     return Square(left) + Square(right);
 }
 
-test square_of_four {
+test SquareOfFour {
     Testing.Assert.Equal(Square(4), 16, "4 * 4");
 }
 
-test sum_of_squares {
+test SumOfSquaresOfThreeAndFour {
     Testing.Assert.Equal(SumOfSquares(3, 4), 25, "9 + 16");
 }

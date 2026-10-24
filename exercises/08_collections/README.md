@@ -7,6 +7,4 @@
   `use Core.Collections.Array;`).
 - `for value in values { ... }` visits every element in order.
 
-Beskid 0.6.6 does not handle compound assignment yet: write
-`total = total + value;`, not `total += value;`. The short forms (`+=`, `-=`,
-`*=`, `/=`, `%=`) arrive in 0.6.7.
+Compound assignment works too: `total += value;` (also `-=`, `*=`, `/=`, `%=`).

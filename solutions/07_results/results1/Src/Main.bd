@@ -26,14 +26,14 @@ string Describe(Result<i32, string> result) {
     };
 }
 
-test divide_ok {
+test DivideOk {
     Testing.Assert.Equal(Describe(Divide(10, 2)), "ok 5", "10 / 2");
 }
 
-test divide_by_zero {
+test DivideByZero {
     Testing.Assert.Equal(Describe(Divide(1, 0)), "error: cannot divide by zero", "1 / 0");
 }
 
-test quarter_uses_question_mark {
+test QuarterUsesQuestionMark {
     Testing.Assert.Equal(Describe(Quarter(20)), "ok 5", "20 / 2 / 2");
 }

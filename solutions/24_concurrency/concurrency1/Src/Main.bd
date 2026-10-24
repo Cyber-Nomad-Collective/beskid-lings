@@ -43,6 +43,6 @@ i64 SumOfSquares(i64 jobs) {
     return total;
 }
 
-test four_workers {
+test FourWorkers {
     Testing.Assert.Equal(SumOfSquares(4_i64), 30_i64, "1 + 4 + 9 + 16");
 }

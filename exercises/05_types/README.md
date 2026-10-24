@@ -4,8 +4,8 @@
 
 ```
 type Point {
-    i32 x,
-    i32 y,
+    i32 x;
+    i32 y;
 
     i32 Sum() {
         return this.x + this.y;

@@ -12,7 +12,7 @@ contract Shape {
 }
 
 type Square : Shape {
-    i32 side,
+    i32 side;
 
     pub i32 Area() {
         return this.side * this.side;
@@ -20,14 +20,14 @@ type Square : Shape {
 }
 
 type Rectangle : Shape {
-    i32 width,
-    i32 height,
+    i32 width;
+    i32 height;
 }
 
 i32 TotalArea(Shape first, Shape second) {
     return first.Area() + second.Area();
 }
 
-test total_area {
+test TotalAreaOfTwoShapes {
     Testing.Assert.Equal(TotalArea(Square { side: 2 }, Rectangle { width: 3, height: 4 }), 16, "4 + 12");
 }
