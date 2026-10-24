@@ -1,0 +1,52 @@
+// fibers1
+//
+// A fiber is a cheap task on the current thread. `spawn (() => Work(x))`
+// starts one and returns a `Fiber<T>`; `Join()` waits for it and gives a
+// `Result<T, FiberError>`. Fibers talk through channels: `Channel.Send` puts a
+// value in, `Channel.Receive` waits for one, and `Channel.TryReceive` takes one
+// without waiting.
+
+use Concurrency.Channel;
+use Concurrency.ChannelError;
+use Concurrency.TryResult;
+use Concurrency.Fiber;
+use Concurrency.FiberError;
+use Core.Results;
+
+i64 SlowSquare(i64 value) {
+    return value * value;
+}
+
+unit Producer(Channel<i64> numbers) {
+    Channel.Send<i64>(numbers, 10_i64);
+    Channel.Send<i64>(numbers, 20_i64);
+}
+
+i64 Joined(Result<i64, FiberError> result) {
+    return match result {
+        Result::Ok(value) => value,
+        Result::Error(_) => -1_i64,
+    };
+}
+
+/// Takes the next value without waiting; -1 when the channel is empty.
+i64 Received(TryResult<i64, ChannelError> result) {
+    return match result {
+        TryResult::Ok(value) => value,
+        _ => -1_i64,
+    };
+}
+
+test fiber_result_after_join {
+    Fiber<i64> worker = spawn (() => SlowSquare(7_i64));
+    Testing.Assert.Equal(Joined(worker.Join()), 49_i64, "7 * 7");
+}
+
+test two_values_through_a_channel {
+    Channel<i64> numbers = Channel.Create<i64>();
+    Fiber<unit> producer = spawn (() => Producer(numbers));
+    producer.Join();
+    i64 first = Received(Channel.TryReceive<i64>(numbers));
+    i64 second = Received(Channel.TryReceive<i64>(numbers));
+    Testing.Assert.Equal(first + second, 30_i64, "10 + 20");
+}

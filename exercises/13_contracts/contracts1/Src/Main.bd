@@ -1,0 +1,33 @@
+// contracts1
+//
+// A `contract` lists the members a type must have. A type promises to meet it
+// with `type Name : Contract { ... }`, and the compiler checks the promise.
+// Code that takes the contract works with every type that conforms. The members
+// that meet a contract are `pub`, because callers reach them through it.
+//
+// TODO: `Rectangle` promises to be a `Shape` but has no `Area`. Add it.
+
+contract Shape {
+    i32 Area();
+}
+
+type Square : Shape {
+    i32 side,
+
+    pub i32 Area() {
+        return this.side * this.side;
+    }
+}
+
+type Rectangle : Shape {
+    i32 width,
+    i32 height,
+}
+
+i32 TotalArea(Shape first, Shape second) {
+    return first.Area() + second.Area();
+}
+
+test total_area {
+    Testing.Assert.Equal(TotalArea(Square { side: 2 }, Rectangle { width: 3, height: 4 }), 16, "4 + 12");
+}

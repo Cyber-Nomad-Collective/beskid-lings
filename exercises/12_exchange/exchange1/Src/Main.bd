@@ -1,0 +1,24 @@
+// exchange1
+//
+// A field that holds a Moved value (an array, a list) cannot simply be
+// overwritten: the old value would be lost while something may still own it.
+// `exchange(place, move value)` puts the new value in and gives you the old one.
+//
+// TODO: `Drain` returns the messages but leaves them in the inbox. Use
+// `exchange` to swap in an empty array and return the old one.
+
+type Inbox {
+    string[] messages,
+
+    /// Empties the inbox and returns the messages it held.
+    string[] Drain(mut this) {
+        return this.messages;
+    }
+}
+
+test drain_returns_old_messages {
+    mut Inbox inbox = Inbox { messages: ["hi", "lunch?"] };
+    string[] old = inbox.Drain();
+    Testing.Assert.Equal(Core.Collections.Array.Len<string>(old), 2_i64, "two old messages");
+    Testing.Assert.Equal(Core.Collections.Array.Len<string>(inbox.messages), 0_i64, "inbox is empty");
+}

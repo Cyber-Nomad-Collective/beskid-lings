@@ -1,0 +1,38 @@
+// move1
+//
+// Arrays and lists are Moved values: they have one owner at a time.
+// A parameter declared `move T name` takes ownership, and the caller hands the
+// value over with `move value`. After that the caller must not use it again.
+//
+// TODO: `ArchiveAndTotal` reads `scores` after handing it over. Reorder the lines
+// so it reads them first.
+
+use Core.Collections.Array;
+
+type Archive {
+    i32[] scores,
+}
+
+/// Takes ownership of `scores` and keeps them in the archive.
+Archive Store(move i32[] scores) {
+    return Archive { scores: scores };
+}
+
+i32 Total(i32[] scores) {
+    mut i32 total = 0;
+    for score in scores {
+        total = total + score;
+    }
+    return total;
+}
+
+i32 ArchiveAndTotal() {
+    i32[] scores = [3, 4, 5];
+    Archive archive = Store(move scores);
+    i32 total = Total(scores);
+    return total + i32(Array.Len<i32>(archive.scores));
+}
+
+test total_plus_count {
+    Testing.Assert.Equal(ArchiveAndTotal(), 15, "3 + 4 + 5 plus three scores");
+}

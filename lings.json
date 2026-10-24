@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "welcome": "Welcome to beskid-lings. Fix each exercise until it compiles and its tests pass. Save the file and the runner checks it again. Type h and Enter for a hint.",
-  "final": "You finished every exercise in this milestone. Tell us what was hard.",
+  "final": "You finished every exercise in beskid-lings. Tell us what was hard.",
   "exercises": [
     {
       "name": "intro1",
@@ -50,6 +50,54 @@
       "dir": "08_collections/collections1",
       "mode": "test",
       "hint": "`Sum` needs `total = total + value;` inside the loop. For `Largest`, start from the first element, `values[0]`, instead of 0."
+    },
+    {
+      "name": "strings1",
+      "dir": "09_strings/strings1",
+      "mode": "test",
+      "hint": "Write `${name}` and `${unread}` inside the string to insert the values. In `IsValidName`, measure `String.Trim(name)` instead of `name`."
+    },
+    {
+      "name": "lists1",
+      "dir": "10_lists/lists1",
+      "mode": "test",
+      "hint": "Find the line `items.Push(\"milk\");` and store its result: `items = items.Push(\"milk\");`."
+    },
+    {
+      "name": "move1",
+      "dir": "11_move/move1",
+      "mode": "test",
+      "hint": "`Store(move scores)` takes `scores` away. Call `Total(scores)` on the line before it."
+    },
+    {
+      "name": "exchange1",
+      "dir": "12_exchange/exchange1",
+      "mode": "test",
+      "hint": "Make an empty array, `string[] empty = [];`, and return `exchange(this.messages, move empty);`."
+    },
+    {
+      "name": "contracts1",
+      "dir": "13_contracts/contracts1",
+      "mode": "test",
+      "hint": "Copy the shape of `Square.Area`: `pub i32 Area() { return this.width * this.height; }` inside `Rectangle`."
+    },
+    {
+      "name": "attributes1",
+      "dir": "14_attributes/attributes1",
+      "mode": "test",
+      "hint": "`Order` holds only numbers. Put `[Copyable]` on the line above `type Order`."
+    },
+    {
+      "name": "fibers1",
+      "dir": "15_fibers/fibers1",
+      "mode": "test",
+      "hint": "Add `Channel.Send<i64>(numbers, 20_i64);` after the first send in `Producer`."
+    },
+    {
+      "name": "isolates1",
+      "dir": "16_isolates/isolates1",
+      "mode": "test",
+      "hint": "Remove the `counted` variable. Return `UpTo(count).Parallel().Where(...).Map((x) => 1_i64).Reduce(0_i64, SumI64 { })`."
     }
   ]
 }
