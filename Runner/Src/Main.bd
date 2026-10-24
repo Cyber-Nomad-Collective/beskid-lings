@@ -1,47 +1,52 @@
 // beskid-lings runner.
 //
-// Reads lings.json, checks the exercises in order, and stops at the first one
-// that does not pass. Next steps: keep .lings-state, watch mode.
+//   lings            watch: check the current exercise, rerun it on save
+//   lings verify     check every exercise in order and stop at the first failure
+//   lings list       show every exercise and whether it is done
+//   lings hint       show the hint for the current exercise
+//
+// Run it from the course folder: `beskid -q run --project Runner -- <command>`.
 
-
+use Core.Args;
 use Core.Collections.Array;
+use Core.FS;
+use Core.FS.FsError;
 use Core.Results;
+use Core.Time;
 use Catalog;
 use Checker;
-
-unit ReportFailure(Exercise exercise, CheckResult result, i64 done, i64 total) {
-    Core.Output.WriteLine("[${done}/${total}] done. Next: ${exercise.name}");
-    Core.Output.WriteLineEmpty();
-    Core.Output.WriteLine(result.output);
-    Core.Output.WriteLine("Edit ${Checker.SourcePath(exercise)}");
-    Core.Output.WriteLine("Hint: ${exercise.hint}");
-}
-
-/// Checks every exercise in order; returns the process exit code.
-i32 Verify(Course course) {
-    i64 total = Array.Len<Exercise>(course.exercises);
-    mut i64 index = 0_i64;
-    while index < total {
-        Exercise exercise = course.exercises[index];
-        CheckResult result = Checker.Run(exercise);
-        if !result.passed {
-            ReportFailure(exercise, result, index, total);
-            return 1;
-        }
-        Core.Output.WriteLine("done ${exercise.name}");
-        index = index + 1_i64;
-    }
-    Core.Output.WriteLineEmpty();
-    Core.Output.WriteLine("[${total}/${total}] done. ${course.final}");
-    return 0;
-}
+use State;
 
 i32 Main() {
     Result<Course, string> loaded = Catalog.Load("lings.json");
     return match loaded {
         Result::Error(message) => Fail(message),
-        Result::Ok(course) => Start(course),
+        Result::Ok(course) => Dispatch(course, CommandName()),
     };
+}
+
+/// The first program argument, or "watch" when there is none.
+string CommandName() {
+    return match Args.Get(1_i64) {
+        Result::Ok(name) => name,
+        Result::Error(error) => "watch",
+    };
+}
+
+i32 Dispatch(Course course, string command) {
+    if command == "watch" {
+        return Watch(course);
+    }
+    if command == "verify" {
+        return Verify(course);
+    }
+    if command == "list" {
+        return List(course);
+    }
+    if command == "hint" {
+        return Hint(course);
+    }
+    return Fail("unknown command `${command}`; use watch, verify, list or hint");
 }
 
 i32 Fail(string message) {
@@ -49,8 +54,129 @@ i32 Fail(string message) {
     return 2;
 }
 
-i32 Start(Course course) {
+/// Index of the first exercise not recorded as done, or the exercise count when all are done.
+i64 CurrentIndex(Course course, string[] done) {
+    i64 total = Array.Len<Exercise>(course.exercises);
+    mut i64 index = 0_i64;
+    while index < total {
+        if !State.IsDone(done, course.exercises[index].name) {
+            return index;
+        }
+        index = index + 1_i64;
+    }
+    return total;
+}
+
+unit ReportFailure(Exercise exercise, CheckResult result, i64 done, i64 total) {
+    Core.Output.WriteLine("[${done}/${total}] done. Current: ${exercise.name}");
+    Core.Output.WriteLineEmpty();
+    Core.Output.WriteLine(result.output);
+    Core.Output.WriteLine("Edit ${Checker.SourcePath(exercise)}");
+}
+
+unit ReportFinished(Course course) {
+    i64 total = Array.Len<Exercise>(course.exercises);
+    Core.Output.WriteLineEmpty();
+    Core.Output.WriteLine("[${total}/${total}] done. ${course.final}");
+}
+
+/// Returns the source text of the exercise, or "" when it cannot be read.
+string SourceText(Exercise exercise) {
+    Result<string, FsError> read = FS.ReadAllText(Checker.SourcePath(exercise));
+    return match read {
+        Result::Ok(text) => text,
+        Result::Error(error) => "",
+    };
+}
+
+/// Blocks until the exercise source differs from `before`.
+/// Editors often save in two steps (truncate, then write), so it waits a moment
+/// after the first change to let the save finish.
+unit WaitForChange(Exercise exercise, string before) {
+    while SourceText(exercise) == before {
+        Time.Sleep(Time.FromMilliseconds(500_i64));
+    }
+    Time.Sleep(Time.FromMilliseconds(300_i64));
+}
+
+/// Checks the current exercise; on success records it and moves on, on failure waits for a save.
+i32 Watch(Course course) {
     Core.Output.WriteLine(course.welcome);
     Core.Output.WriteLineEmpty();
-    return Verify(course);
+    mut string[] done = State.Load();
+    i64 total = Array.Len<Exercise>(course.exercises);
+    mut i64 index = CurrentIndex(course, done);
+    while index < total {
+        Exercise exercise = course.exercises[index];
+        string before = SourceText(exercise);
+        CheckResult result = Checker.Run(exercise);
+        if result.passed {
+            Core.Output.WriteLine("done ${exercise.name}");
+            done = State.MarkDone(move done, exercise.name);
+            index = CurrentIndex(course, done);
+        } else {
+            ReportFailure(exercise, result, index, total);
+            Core.Output.WriteLine("Save the file to check again. Stuck? Run `lings hint` in another terminal. Ctrl+C quits.");
+            WaitForChange(exercise, before);
+            Core.Output.WriteLineEmpty();
+            Core.Output.WriteLine("----------------------------------------------------------------");
+        }
+    }
+    ReportFinished(course);
+    return 0;
+}
+
+/// Checks every exercise in order, records the ones that pass, and stops at the first failure.
+i32 Verify(Course course) {
+    mut string[] done = State.Load();
+    i64 total = Array.Len<Exercise>(course.exercises);
+    mut i64 index = 0_i64;
+    while index < total {
+        Exercise exercise = course.exercises[index];
+        CheckResult result = Checker.Run(exercise);
+        if !result.passed {
+            ReportFailure(exercise, result, index, total);
+            Core.Output.WriteLine("Hint: ${exercise.hint}");
+            return 1;
+        }
+        Core.Output.WriteLine("done ${exercise.name}");
+        done = State.MarkDone(move done, exercise.name);
+        index = index + 1_i64;
+    }
+    ReportFinished(course);
+    return 0;
+}
+
+i32 List(Course course) {
+    string[] done = State.Load();
+    i64 total = Array.Len<Exercise>(course.exercises);
+    i64 current = CurrentIndex(course, done);
+    mut i64 index = 0_i64;
+    while index < total {
+        Exercise exercise = course.exercises[index];
+        mut string mark = "    ";
+        if State.IsDone(done, exercise.name) {
+            mark = "done";
+        }
+        if index == current {
+            mark = "  ->";
+        }
+        Core.Output.WriteLine("${mark}  ${exercise.name}  (${Checker.SourcePath(exercise)})");
+        index = index + 1_i64;
+    }
+    Core.Output.WriteLineEmpty();
+    Core.Output.WriteLine("${Array.Len<string>(done)}/${total} done");
+    return 0;
+}
+
+i32 Hint(Course course) {
+    string[] done = State.Load();
+    i64 index = CurrentIndex(course, done);
+    if index == Array.Len<Exercise>(course.exercises) {
+        Core.Output.WriteLine("Every exercise is done. No hints needed.");
+        return 0;
+    }
+    Exercise exercise = course.exercises[index];
+    Core.Output.WriteLine("Hint for ${exercise.name}: ${exercise.hint}");
+    return 0;
 }

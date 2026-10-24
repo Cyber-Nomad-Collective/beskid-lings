@@ -1,13 +1,26 @@
 // Checking one exercise with the beskid CLI.
 
+use Core.Collections.Array;
+use Core.Json;
+use Core.Json.JsonError;
+use Core.Json.JsonValue;
+use Core.Optional.Option;
 use Core.Process;
 use Core.Results;
+use Core.String;
 use Catalog;
 
-/// Outcome of checking one exercise; `output` holds the compiler and test text.
+/// Outcome of checking one exercise; `output` is the text to show the learner.
 pub type CheckResult {
     pub bool passed,
     pub string output,
+}
+
+/// Raw result of one beskid invocation.
+type Invocation {
+    i64 exitCode,
+    string stdout,
+    string stderr,
 }
 
 /// The exercise's project folder, relative to the course root.
@@ -20,20 +33,98 @@ pub string SourcePath(Exercise exercise) {
     return "${ProjectDir(exercise)}/Src/Main.bd";
 }
 
-/// Runs `beskid -q test` (or `check` for mode "check") on the exercise project.
+/// Runs `beskid -q test --json` (or `check` for mode "check") on the exercise project.
 pub CheckResult Run(Exercise exercise) {
-    mut string command = "test";
     if exercise.mode == "check" {
-        command = "check";
+        Invocation checked = Invoke(["-q", "check", "--project", ProjectDir(exercise)]);
+        return CheckResult { passed: checked.exitCode == 0_i64, output: checked.stderr + checked.stdout };
     }
-    // Process.Run does not search PATH, so `/usr/bin/env` finds `beskid` for us.
-    Result<ProcessOutput, ProcessError> ran = Process.Run("/usr/bin/env", ["beskid", "-q", command, "--project", ProjectDir(exercise)]);
-    // A non-zero exit arrives as ProcessError::ExitCode, not as Ok with exitCode != 0.
+    Invocation tested = Invoke(["-q", "test", "--project", ProjectDir(exercise), "--json"]);
+    if tested.exitCode == 0_i64 {
+        return CheckResult { passed: true, output: "" };
+    }
+    // Without a JSON result the exercise did not compile; the diagnostics are on stderr.
+    string failures = RenderFailures(tested.stdout);
+    if failures == "" {
+        return CheckResult { passed: false, output: tested.stderr };
+    }
+    return CheckResult { passed: false, output: failures };
+}
+
+/// Runs beskid through `sh` and always gets stdout, stderr and the real exit code.
+/// Process.Run does not search PATH and reports a non-zero exit as an error that
+/// drops stdout, so the script prints the exit code itself and exits 0.
+Invocation Invoke(move string[] beskidArgs) {
+    mut string[] args = ["-c", "beskid \"$@\"; echo \"@exit $?\"; exit 0", "sh"];
+    mut i64 index = 0_i64;
+    while index < Array.Len<string>(beskidArgs) {
+        args = Array.Append<string>(args, beskidArgs[index]);
+        index = index + 1_i64;
+    }
+    Result<ProcessOutput, ProcessError> ran = Process.Run("/bin/sh", move args);
     return match ran {
-        Result::Ok(output) => CheckResult { passed: output.exitCode == 0_i64, output: output.stdout + output.stderr },
-        Result::Error(error) => match error {
-            ProcessError::ExitCode(code, stderr) => CheckResult { passed: false, output: stderr },
-            _ => CheckResult { passed: false, output: "could not start `beskid`; is it on PATH?" },
+        Result::Ok(output) => SplitExitMarker(output.stdout, output.stderr),
+        Result::Error(error) => Invocation { exitCode: -1_i64, stdout: "", stderr: "could not start `beskid`; is it on PATH?" },
+    };
+}
+
+/// Takes the `@exit N` line off the end of stdout and parses N.
+Invocation SplitExitMarker(string stdout, string stderr) {
+    i64 marker = String.LastIndexOf(stdout, "@exit ");
+    if marker < 0_i64 {
+        return Invocation { exitCode: -1_i64, stdout: stdout, stderr: stderr };
+    }
+    string code = String.Trim(String.SubSlice(stdout, marker + 6_i64, String.Len(stdout) - marker - 6_i64));
+    mut i64 exitCode = 1_i64;
+    if code == "0" {
+        exitCode = 0_i64;
+    }
+    return Invocation { exitCode: exitCode, stdout: String.SubSlice(stdout, 0_i64, marker), stderr: stderr };
+}
+
+/// Formats the failed tests of a `beskid test --json` result; "" when there is no result.
+string RenderFailures(string json) {
+    Result<JsonValue, JsonError> parsed = Json.Parse(String.Trim(json));
+    JsonValue root = match parsed {
+        Result::Ok(value) => value,
+        Result::Error(error) => Json.EmptyObject(),
+    };
+    JsonValue tests = match Json.Get(root, "tests") {
+        Option::Some(value) => value,
+        Option::None => Json.EmptyList(),
+    };
+    mut string text = "";
+    mut i64 index = 0_i64;
+    while index < Json.Length(tests) {
+        match Json.At(tests, index) {
+            Option::None => {},
+            Option::Some(result) => {
+                if Field(result, "outcome") != "passed" {
+                    text = text + "FAIL ${Field(result, "name")}" + String.Newline();
+                    text = text + "  ${CleanReason(Field(result, "reason"))}" + String.Newline();
+                }
+            },
+        };
+        index = index + 1_i64;
+    }
+    return text;
+}
+
+/// Keeps the assertion message and drops the runtime-trap prefix in front of it.
+string CleanReason(string reason) {
+    i64 start = String.IndexOf(reason, "Assertion failed: ");
+    if start < 0_i64 {
+        return String.Trim(reason);
+    }
+    return String.Trim(String.SubSlice(reason, start + 18_i64, String.Len(reason) - start - 18_i64));
+}
+
+string Field(JsonValue object, string key) {
+    return match Json.Get(object, key) {
+        Option::None => "",
+        Option::Some(value) => match Json.AsText(value) {
+            Option::None => "",
+            Option::Some(text) => text,
         },
     };
 }

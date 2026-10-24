@@ -9,13 +9,25 @@ pass. Inspired by rustlings.
 
 ## Start
 
+From this folder:
+
 ```
 beskid -q run --project Runner
 ```
 
-The runner checks the exercises in order and tells you which one to fix next.
-Each exercise is a Beskid project under `exercises/`. Open its `Src/Main.bd`,
-read the comments, and fix the line marked `TODO`.
+The runner starts in watch mode. It checks the exercises in order, shows what
+is wrong with the current one, and checks it again each time you save. Each
+exercise is a Beskid project under `exercises/`. Open its `Src/Main.bd`, read
+the comments, and fix the line marked `TODO`. Press Ctrl+C to stop; your
+progress is kept in `.lings-state`.
+
+Other commands, in a second terminal:
+
+```
+beskid -q run --project Runner -- hint     # hint for the current exercise
+beskid -q run --project Runner -- list     # every exercise and its status
+beskid -q run --project Runner -- verify   # check everything from the start
+```
 
 You can also check one exercise by hand:
 
