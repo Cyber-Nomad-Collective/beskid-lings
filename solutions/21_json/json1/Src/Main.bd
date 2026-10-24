@@ -14,13 +14,17 @@ use Core.Optional.Option;
 use Core.Results;
 
 /// The "name" of a user document, or "unknown" when it is missing or not text.
-string UserName(string document) {
+string UserName(string document)
+{
     Result<JsonValue, JsonError> parsed = Json.Parse(document);
-    return match parsed {
+    return match (parsed)
+    {
         Result::Error(_) => "unknown",
-        Result::Ok(root) => match Json.Get(root, "name") {
+        Result::Ok(root) => match (Json.Get(root, "name"))
+        {
             Option::None => "unknown",
-            Option::Some(value) => match Json.AsText(value) {
+            Option::Some(value) => match (Json.AsText(value))
+            {
                 Option::None => "unknown",
                 Option::Some(name) => name,
             },
@@ -28,20 +32,24 @@ string UserName(string document) {
     };
 }
 
-string MakeUser(string name) {
+string MakeUser(string name)
+{
     JsonValue user = Json.With(Json.EmptyObject(), "name", JsonValue::Text(name));
     return Json.Stringify(user);
 }
 
-test ReadsTheName {
+test ReadsTheName
+{
     Testing.Assert.Equal(UserName("{\"name\": \"Ada\", \"age\": 36}"), "Ada", "name field");
 }
 
-test MissingNameIsUnknown {
+test MissingNameIsUnknown
+{
     Testing.Assert.Equal(UserName("{\"age\": 36}"), "unknown", "no name field");
     Testing.Assert.Equal(UserName("not json"), "unknown", "invalid JSON");
 }
 
-test BuildsAUser {
+test BuildsAUser
+{
     Testing.Assert.Equal(MakeUser("Bob"), "{\"name\":\"Bob\"}", "compact JSON");
 }

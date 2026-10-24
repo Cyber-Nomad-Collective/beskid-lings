@@ -21,5 +21,6 @@ The compiler resolves the whole graph: an `inject` with no registration is a
 compile error, so a missing service never surprises you at run time.
 
 Hosts also have `startup(...)`, named `scope`s with `init(...)`/`dispose(...)`,
-and `with Scope(...) { ... }` to activate a scope. In Beskid 0.6.6 those hooks
-do not run yet; the compiler checks them.
+and `with Scope(...) { ... }` to activate a scope. The hooks run from Beskid
+0.6.7; in 0.6.7-preview.2 calling a contract method on an injected service
+still fails to build, so this lesson stays with the wiring the compiler checks.

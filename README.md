@@ -7,7 +7,7 @@ pass. Inspired by rustlings.
 
 ## Requirements
 
-- Beskid 0.6.7-preview.1 or later on `PATH` (`beskid --version`). This branch
+- Beskid 0.6.7-preview.2 or later on `PATH` (`beskid --version`). This branch
   uses the 0.6.7 syntax (fields end with `;`); `main` stays on Beskid 0.6.6.
 
 Or click **Open in GitHub Codespaces** above (it opens `main`, on Beskid 0.6.6). The codespace installs Beskid

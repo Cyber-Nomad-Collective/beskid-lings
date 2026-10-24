@@ -14,61 +14,74 @@ use Report;
 use State;
 use Watch;
 
-i32 Main() {
+i32 Main()
+{
     Result<Course, string> loaded = Catalog.Load("lings.json");
-    return match loaded {
+    return match (loaded)
+    {
         Result::Error(message) => Fail(message),
         Result::Ok(course) => Dispatch(course, CommandName()),
     };
 }
 
 /// The first program argument, or "watch" when there is none.
-string CommandName() {
-    return match Args.Get(1_i64) {
+string CommandName()
+{
+    return match (Args.Get(1))
+    {
         Result::Ok(name) => name,
         Result::Error(error) => "watch",
     };
 }
 
-i32 Dispatch(Course course, string command) {
-    if command == "watch" {
+i32 Dispatch(Course course, string command)
+{
+    if (command == "watch")
+    {
         return Watch.Run(course);
     }
-    if command == "verify" {
+    if (command == "verify")
+    {
         return Verify(course);
     }
-    if command == "list" {
+    if (command == "list")
+    {
         Report.List(course, State.Load());
         return 0;
     }
-    if command == "hint" {
+    if (command == "hint")
+    {
         Report.Hint(course, State.Load());
         return 0;
     }
     return Fail("unknown command `${command}`; use watch, verify, list or hint");
 }
 
-i32 Fail(string message) {
+i32 Fail(string message)
+{
     Core.Output.WriteLine("error: ${message}");
     return 2;
 }
 
 /// Checks every exercise in order, records the ones that pass, and stops at the first failure.
-i32 Verify(Course course) {
+i32 Verify(Course course)
+{
     mut string[] done = State.Load();
     i64 total = Array.Len<Exercise>(course.exercises);
-    mut i64 index = 0_i64;
-    while index < total {
+    mut i64 index = 0;
+    while (index < total)
+    {
         Exercise exercise = course.exercises[index];
         CheckResult result = Checker.Run(exercise);
-        if !result.passed {
+        if (!result.passed)
+        {
             Report.Failure(exercise, result, index, total);
             Core.Output.WriteLine("Hint: ${exercise.hint}");
             return 1;
         }
         Core.Output.WriteLine("done ${exercise.name}");
-        done = State.MarkDone(move done, exercise.name);
-        index = index + 1_i64;
+        done = State.MarkDone(done, exercise.name);
+        index = index + 1;
     }
     Report.Finished(course);
     return 0;

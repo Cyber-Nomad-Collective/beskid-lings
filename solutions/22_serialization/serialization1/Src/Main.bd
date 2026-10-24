@@ -12,29 +12,43 @@ use Core.Serialization.Limits;
 use Core.Serialization.Registry;
 
 [Serialize]
-pub type Point {
+pub type Point
+{
     pub i32 x;
     pub i32 y;
 }
 
-string Save(Point value) {
+string Save(Point value)
+{
     Registry.ShapeRegistry table = Registry.Create();
-    Registry.RegisterCompiled<Point>(table, 1048576_i64, 8388608_i64, 100000_i64);
-    return match Serialization.WriteTyped<Point>(value, Descriptors.CompiledShape<Point>().id, table, Limits.DefaultLimits()) {
+    Registry.RegisterCompiled<Point>(table, 1048576, 8388608, 100000);
+    return match (Serialization.WriteTyped<Point>(value, Descriptors.CompiledShape<Point>().id, table, Limits.DefaultLimits()))
+    {
         Result::Ok(text) => text,
         Result::Error(_) => "",
     };
 }
 
-Point Load(string text) {
-    return match Serialization.Read<Point>(text, Limits.DefaultLimits()) {
+Point Load(string text)
+{
+    return match (Serialization.Read<Point>(text, Limits.DefaultLimits()))
+    {
         Result::Ok(point) => point,
-        Result::Error(_) => Point { x: -1, y: -1 },
+        Result::Error(_) => Point
+        {
+            x: -1,
+            y: -1,
+        },
     };
 }
 
-test PointRoundTrips {
-    Point loaded = Load(Save(Point { x: 3, y: 4 }));
+test PointRoundTrips
+{
+    Point loaded = Load(Save(Point
+    {
+        x: 3,
+        y: 4,
+    }));
     Testing.Assert.Equal(loaded.x, 3, "x survives");
     Testing.Assert.Equal(loaded.y, 4, "y survives");
 }

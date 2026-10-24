@@ -1,29 +1,33 @@
 // lists1
 //
-// `List<T>` from `Core.Collections.List` grows as you add items.
-// A list has exactly one owner. `Push` consumes the list and returns the
-// grown one, so you store the result back: `list = list.Push(value);`.
+// `List<T>` from `Core.Collections.List` grows as you add items. `Push` adds an
+// item to the end of the list in place: `items.Push("milk");`. The list must
+// be declared `mut`, because pushing changes it.
 
 use Core.Collections.List;
 use Core.Results;
 
-List<string> Shopping() {
+List<string> Shopping()
+{
     mut List<string> items = List.New<string>();
-    items = items.Push("bread");
-    items = items.Push("milk");
-    items = items.Push("apples");
+    items.Push("bread");
+    items.Push("milk");
+    items.Push("apples");
     return items;
 }
 
-string ItemAt(List<string> items, i64 index) {
-    return match items.Get(index) {
+string ItemAt(List<string> items, i64 index)
+{
+    return match (items.Get(index))
+    {
         Result::Ok(item) => item,
         Result::Error(message) => "",
     };
 }
 
-test ThreeItems {
+test ThreeItems
+{
     List<string> items = Shopping();
-    Testing.Assert.Equal(items.Count(), 3_i64, "three items");
-    Testing.Assert.Equal(ItemAt(items, 2_i64), "apples", "apples come last");
+    Testing.Assert.Equal(items.Count(), 3, "three items");
+    Testing.Assert.Equal(ItemAt(items, 2), "apples", "apples come last");
 }

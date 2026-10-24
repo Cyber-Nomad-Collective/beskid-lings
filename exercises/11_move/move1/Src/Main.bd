@@ -1,38 +1,50 @@
 // move1
 //
-// Arrays and lists are Moved values: they have one owner at a time.
-// A parameter declared `move T name` takes ownership, and the caller hands the
-// value over with `move value`. After that the caller must not use it again.
+// Arrays and lists are Moved values: they have one owner at a time. In
+// ordinary code you pass them around freely. When one crosses to another
+// isolate, for example into a parallel task, ownership is handed over, and
+// you say so with `move`: `s.Spawn(() => Total(move scores))`. After that the
+// array belongs to the task, and the caller must not use it again.
 //
-// TODO: `ArchiveAndTotal` reads `scores` after handing it over. Reorder the lines
-// so it reads them first.
+// TODO: `TotalPlusCount` reads `scores` after handing it to the task. Count the
+// scores before the hand-over.
 
 use Core.Collections.Array;
+use Core.Parallel;
+use Core.Parallel.Scopes;
+use Core.Results;
 
-type Archive {
-    i32[] scores;
-}
-
-/// Takes ownership of `scores` and keeps them in the archive.
-Archive Store(move i32[] scores) {
-    return Archive { scores: scores };
-}
-
-i32 Total(i32[] scores) {
-    mut i32 total = 0;
-    for score in scores {
-        total = total + score;
+i64 Total(i64[] scores)
+{
+    mut i64 total = 0;
+    for score in scores
+    {
+        total += score;
     }
     return total;
 }
 
-i32 ArchiveAndTotal() {
-    i32[] scores = [3, 4, 5];
-    Archive archive = Store(move scores);
-    i32 total = Total(scores);
-    return total + i32(Array.Len<i32>(archive.scores));
+/// Sums the scores on another isolate, then adds how many there were.
+i64 TotalPlusCount()
+{
+    Result<i64, ParallelError> result = Parallel.Scope<i64>((Core.Parallel.Scopes.Scope s) => {
+        i64[] scores = [3, 4, 5];
+        Task<i64> task = s.Spawn(() => Total(move scores));
+        i64 count = Array.Len<i64>(scores);
+        return match (task.Join())
+        {
+            Result::Ok(total) => Result::Ok(total + count),
+            Result::Error(_) => Result::Error(ParallelError::Cancelled),
+        };
+    });
+    return match (result)
+    {
+        Result::Ok(value) => value,
+        Result::Error(_) => -1,
+    };
 }
 
-test TotalPlusCount {
-    Testing.Assert.Equal(ArchiveAndTotal(), 15, "3 + 4 + 5 plus three scores");
+test TotalPlusCountIsFifteen
+{
+    Testing.Assert.Equal(TotalPlusCount(), 15, "3 + 4 + 5 plus three scores");
 }

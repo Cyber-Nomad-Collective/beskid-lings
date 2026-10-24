@@ -8,10 +8,12 @@
 // `i32 Answer()` is a function that takes no arguments and returns an i32.
 //
 
-i32 Answer() {
+i32 Answer()
+{
     return 42;
 }
 
-test AnswerIsFortyTwo {
+test AnswerIsFortyTwo
+{
     Testing.Assert.Equal(Answer(), 42, "Answer() should return 42");
 }

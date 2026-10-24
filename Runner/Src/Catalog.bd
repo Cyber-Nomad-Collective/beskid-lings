@@ -10,7 +10,8 @@ use Core.Optional.Option;
 use Core.Results;
 
 /// One entry of `exercises` in lings.json.
-pub type Exercise {
+pub type Exercise
+{
     pub string name;
     pub string dir;
     pub string mode;
@@ -18,38 +19,48 @@ pub type Exercise {
 }
 
 /// The parts of lings.json the runner uses.
-pub type Course {
+pub type Course
+{
     pub string welcome;
     pub string final;
     pub Exercise[] exercises;
 }
 
 /// Reads and parses `path`; the error is a message for the learner.
-pub Result<Course, string> Load(string path) {
+pub Result<Course, string> Load(string path)
+{
     string text = ReadText(path)?;
     JsonValue root = ParseJson(text, path)?;
     JsonValue list = Member(root, "exercises", path)?;
     mut Exercise[] exercises = Array.Empty<Exercise>();
-    mut i64 index = 0_i64;
-    while index < Json.Length(list) {
-        match Json.At(list, index) {
-            Option::None => {},
-            Option::Some(entry) => { Array.Append<Exercise>(exercises, ReadExercise(entry)); },
+    mut i64 index = 0;
+    while (index < Json.Length(list))
+    {
+        match (Json.At(list, index))
+        {
+            Option::None => { },
+            Option::Some(entry) => {
+                Array.Append<Exercise>(exercises, ReadExercise(entry));
+            },
         };
-        index = index + 1_i64;
+        index = index + 1;
     }
-    if Array.Len<Exercise>(exercises) == 0_i64 {
+    if (Array.Len<Exercise>(exercises) == 0)
+    {
         return Result::Error("${path} lists no exercises");
     }
-    return Result::Ok(Course {
+    return Result::Ok(Course
+    {
         welcome: TextOr(root, "welcome", ""),
         final: TextOr(root, "final", ""),
         exercises: exercises,
     });
 }
 
-Exercise ReadExercise(JsonValue entry) {
-    return Exercise {
+Exercise ReadExercise(JsonValue entry)
+{
+    return Exercise
+    {
         name: TextOr(entry, "name", ""),
         dir: TextOr(entry, "dir", ""),
         mode: TextOr(entry, "mode", "test"),
@@ -57,34 +68,43 @@ Exercise ReadExercise(JsonValue entry) {
     };
 }
 
-Result<string, string> ReadText(string path) {
+Result<string, string> ReadText(string path)
+{
     Result<string, FsError> read = FS.ReadAllText(path);
-    return match read {
+    return match (read)
+    {
         Result::Ok(text) => Result::Ok(text),
         Result::Error(error) => Result::Error("cannot read ${path}; run the runner from the beskid-lings folder"),
     };
 }
 
-Result<JsonValue, string> ParseJson(string text, string path) {
+Result<JsonValue, string> ParseJson(string text, string path)
+{
     Result<JsonValue, JsonError> parsed = Json.Parse(text);
-    return match parsed {
+    return match (parsed)
+    {
         Result::Ok(value) => Result::Ok(value),
         Result::Error(error) => Result::Error("${path} is not valid JSON"),
     };
 }
 
-Result<JsonValue, string> Member(JsonValue object, string key, string path) {
-    return match Json.Get(object, key) {
+Result<JsonValue, string> Member(JsonValue object, string key, string path)
+{
+    return match (Json.Get(object, key))
+    {
         Option::Some(value) => Result::Ok(value),
         Option::None => Result::Error("${path} has no `${key}`"),
     };
 }
 
 /// Returns the text member `key` of `object`, or `fallback` when it is missing.
-string TextOr(JsonValue object, string key, string fallback) {
-    return match Json.Get(object, key) {
+string TextOr(JsonValue object, string key, string fallback)
+{
+    return match (Json.Get(object, key))
+    {
         Option::None => fallback,
-        Option::Some(value) => match Json.AsText(value) {
+        Option::Some(value) => match (Json.AsText(value))
+        {
             Option::None => fallback,
             Option::Some(text) => text,
         },

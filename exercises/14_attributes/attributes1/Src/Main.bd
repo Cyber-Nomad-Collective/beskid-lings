@@ -12,25 +12,45 @@ use Core.Parallel;
 use Core.Parallel.Scopes;
 use Core.Results;
 
-type Order {
+type Order
+{
     i64 quantity;
     i64 price;
 }
 
-i64 TotalInParallel(Order first, Order second) {
+i64 TotalInParallel(Order first, Order second)
+{
     Result<i64, ParallelError> result = Parallel.Scope<i64>((Core.Parallel.Scopes.Scope s) => {
         Task<i64> a = s.Spawn(() => first.quantity * first.price);
         Task<i64> b = s.Spawn(() => second.quantity * second.price);
-        i64 left = match a.Join() { Result::Ok(value) => value, Result::Error(_) => 0_i64, };
-        i64 right = match b.Join() { Result::Ok(value) => value, Result::Error(_) => 0_i64, };
+        i64 left = match (a.Join())
+        {
+            Result::Ok(value) => value,
+            Result::Error(_) => 0,
+        };
+        i64 right = match (b.Join())
+        {
+            Result::Ok(value) => value,
+            Result::Error(_) => 0,
+        };
         return Result::Ok(left + right);
     });
-    return match result {
+    return match (result)
+    {
         Result::Ok(value) => value,
-        Result::Error(_) => -1_i64,
+        Result::Error(_) => -1,
     };
 }
 
-test TotalsBothOrders {
-    Testing.Assert.Equal(TotalInParallel(Order { quantity: 2_i64, price: 10_i64 }, Order { quantity: 1_i64, price: 5_i64 }), 25_i64, "20 + 5");
+test TotalsBothOrders
+{
+    Testing.Assert.Equal(TotalInParallel(Order
+    {
+        quantity: 2,
+        price: 10,
+    }, Order
+    {
+        quantity: 1,
+        price: 5,
+    }), 25, "20 + 5");
 }

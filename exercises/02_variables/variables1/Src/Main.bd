@@ -6,7 +6,8 @@
 //
 // TODO: make `count` changeable so the function compiles.
 
-i32 CountToThree() {
+i32 CountToThree()
+{
     i32 count = 0;
     count = count + 1;
     count = count + 1;
@@ -14,6 +15,7 @@ i32 CountToThree() {
     return count;
 }
 
-test CountsToThree {
+test CountsToThree
+{
     Testing.Assert.Equal(CountToThree(), 3, "count should reach 3");
 }

@@ -5,31 +5,45 @@
 // Code that takes the contract works with every type that conforms. The members
 // that meet a contract are `pub`, because callers reach them through it.
 
-contract Shape {
+contract Shape
+{
     i32 Area();
 }
 
-type Square : Shape {
+type Square : Shape
+{
     i32 side;
 
-    pub i32 Area() {
+    pub i32 Area()
+    {
         return this.side * this.side;
     }
 }
 
-type Rectangle : Shape {
+type Rectangle : Shape
+{
     i32 width;
     i32 height;
 
-    pub i32 Area() {
+    pub i32 Area()
+    {
         return this.width * this.height;
     }
 }
 
-i32 TotalArea(Shape first, Shape second) {
+i32 TotalArea(Shape first, Shape second)
+{
     return first.Area() + second.Area();
 }
 
-test TotalAreaOfTwoShapes {
-    Testing.Assert.Equal(TotalArea(Square { side: 2 }, Rectangle { width: 3, height: 4 }), 16, "4 + 12");
+test TotalAreaOfTwoShapes
+{
+    Testing.Assert.Equal(TotalArea(Square
+    {
+        side: 2,
+    }, Rectangle
+    {
+        width: 3,
+        height: 4,
+    }), 16, "4 + 12");
 }

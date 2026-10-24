@@ -61,19 +61,19 @@
       "name": "lists1",
       "dir": "10_lists/lists1",
       "mode": "test",
-      "hint": "Find the line `items.Push(\"milk\");` and store its result: `items = items.Push(\"milk\");`."
+      "hint": "Add `items.Push(\"milk\");` between the lines that push \"bread\" and \"apples\"."
     },
     {
       "name": "move1",
       "dir": "11_move/move1",
       "mode": "test",
-      "hint": "`Store(move scores)` takes `scores` away. Call `Total(scores)` on the line before it."
+      "hint": "Move the line `i64 count = Array.Len<i64>(scores);` above the `s.Spawn(...)` line, so the scores are counted before `move scores` hands them over."
     },
     {
       "name": "exchange1",
       "dir": "12_exchange/exchange1",
       "mode": "test",
-      "hint": "Make an empty array, `string[] empty = [];`, and return `exchange(this.messages, move empty);`."
+      "hint": "Make an empty array, `string[] empty = [];`, and return `exchange(this.messages, empty);`."
     },
     {
       "name": "contracts1",

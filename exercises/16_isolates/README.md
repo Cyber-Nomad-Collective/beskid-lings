@@ -17,3 +17,7 @@ i64 total = numbers
 
 The steps run at the same time on different isolates, so a step cannot change
 a variable of the caller. Express counting and summing as a reduction instead.
+
+Number literals take their type from where they are used. In `Map` and
+`Reduce`, write the type out (`1_i64`, `0_i64`) so the results match the
+`SumI64` combiner.

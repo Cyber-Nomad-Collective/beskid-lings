@@ -5,27 +5,33 @@
 //
 // TODO: `Classify` forgets about zero, and `SumUpTo` stops one number too early.
 
-string Classify(i32 value) {
-    if value < 0 {
+string Classify(i32 value)
+{
+    if (value < 0)
+    {
         return "negative";
     }
     return "positive";
 }
 
-i32 SumUpTo(i32 limit) {
+i32 SumUpTo(i32 limit)
+{
     mut i32 total = 0;
-    for i in range(1, limit) {
+    for i in range(1, limit)
+    {
         total = total + i;
     }
     return total;
 }
 
-test ClassifyValues {
+test ClassifyValues
+{
     Testing.Assert.Equal(Classify(-5), "negative", "below zero");
     Testing.Assert.Equal(Classify(0), "zero", "zero itself");
     Testing.Assert.Equal(Classify(7), "positive", "above zero");
 }
 
-test SumUpToTen {
+test SumUpToTen
+{
     Testing.Assert.Equal(SumUpTo(10), 55, "1 + 2 + ... + 10");
 }

@@ -6,15 +6,22 @@
 //
 // TODO: give `Rectangle` a `height` field and use it in `Area`.
 
-type Rectangle {
+type Rectangle
+{
     i32 width;
 
-    i32 Area() {
+    i32 Area()
+    {
         return this.width * this.width;
     }
 }
 
-test AreaOfRectangle {
-    Rectangle box = Rectangle { width: 3, height: 4 };
+test AreaOfRectangle
+{
+    Rectangle box = Rectangle
+    {
+        width: 3,
+        height: 4,
+    };
     Testing.Assert.Equal(box.Area(), 12, "3 * 4");
 }

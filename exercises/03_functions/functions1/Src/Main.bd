@@ -5,18 +5,22 @@
 //
 // TODO: `SumOfSquares` is missing its second parameter. Add it.
 
-i32 Square(i32 value) {
+i32 Square(i32 value)
+{
     return value * value;
 }
 
-i32 SumOfSquares(i32 left) {
+i32 SumOfSquares(i32 left)
+{
     return Square(left) + Square(right);
 }
 
-test SquareOfFour {
+test SquareOfFour
+{
     Testing.Assert.Equal(Square(4), 16, "4 * 4");
 }
 
-test SumOfSquaresOfThreeAndFour {
+test SumOfSquaresOfThreeAndFour
+{
     Testing.Assert.Equal(SumOfSquares(3, 4), 25, "9 + 16");
 }

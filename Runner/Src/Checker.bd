@@ -10,96 +10,143 @@ use Core.String;
 use Catalog;
 
 /// Outcome of checking one exercise; `output` is the text to show the learner.
-pub type CheckResult {
+pub type CheckResult
+{
     pub bool passed;
     pub string output;
 }
 
 /// Raw result of one beskid invocation.
-type Invocation {
+type Invocation
+{
     i64 exitCode;
     string stdout;
     string stderr;
 }
 
 /// The exercise's project folder, relative to the course root.
-pub string ProjectDir(Exercise exercise) {
+pub string ProjectDir(Exercise exercise)
+{
     return "exercises/${exercise.dir}";
 }
 
 /// The file the learner edits.
-pub string SourcePath(Exercise exercise) {
+pub string SourcePath(Exercise exercise)
+{
     return "${ProjectDir(exercise)}/Src/Main.bd";
 }
 
 /// Runs `beskid -q test --json` (or `check` for mode "check") on the exercise project.
-pub CheckResult Run(Exercise exercise) {
-    if exercise.mode == "check" {
+pub CheckResult Run(Exercise exercise)
+{
+    if (exercise.mode == "check")
+    {
         Invocation checked = Invoke(["-q", "check", "--project", ProjectDir(exercise)]);
-        return CheckResult { passed: checked.exitCode == 0_i64, output: checked.stderr + checked.stdout };
+        return CheckResult
+        {
+            passed: checked.exitCode == 0,
+            output: checked.stderr + checked.stdout,
+        };
     }
     Invocation tested = Invoke(["-q", "test", "--project", ProjectDir(exercise), "--json"]);
-    if tested.exitCode == 0_i64 {
-        return CheckResult { passed: true, output: "" };
+    if (tested.exitCode == 0)
+    {
+        return CheckResult
+        {
+            passed: true,
+            output: "",
+        };
     }
     // Without a JSON result the exercise did not compile; the diagnostics are on stderr.
     string failures = RenderFailures(tested.stdout);
-    if failures == "" {
-        return CheckResult { passed: false, output: tested.stderr };
+    if (failures == "")
+    {
+        return CheckResult
+        {
+            passed: false,
+            output: tested.stderr,
+        };
     }
-    return CheckResult { passed: false, output: failures };
+    return CheckResult
+    {
+        passed: false,
+        output: failures,
+    };
 }
 
 /// Runs beskid and captures stdout, stderr and the exit code.
-Invocation Invoke(move string[] beskidArgs) {
-    Result<ProcessOutput, ProcessError> ran = Process.Run("beskid", move beskidArgs);
-    return match ran {
-        Result::Ok(output) => Invocation { exitCode: output.exitCode, stdout: output.stdout, stderr: output.stderr },
-        Result::Error(error) => Invocation { exitCode: -1_i64, stdout: "", stderr: "could not start `beskid`: ${Process.Message(error)}" },
+Invocation Invoke(string[] beskidArgs)
+{
+    Result<ProcessOutput, ProcessError> ran = Process.Run("beskid", beskidArgs);
+    return match (ran)
+    {
+        Result::Ok(output) => Invocation
+        {
+            exitCode: output.exitCode,
+            stdout: output.stdout,
+            stderr: output.stderr,
+        },
+        Result::Error(error) => Invocation
+        {
+            exitCode: -1,
+            stdout: "",
+            stderr: "could not start `beskid`: ${Process.Message(error)}",
+        },
     };
 }
 
 /// Formats the failed tests of a `beskid test --json` result; "" when there is no result.
-string RenderFailures(string json) {
+string RenderFailures(string json)
+{
     Result<JsonValue, JsonError> parsed = Json.Parse(String.Trim(json));
-    JsonValue root = match parsed {
+    JsonValue root = match (parsed)
+    {
         Result::Ok(value) => value,
         Result::Error(error) => Json.EmptyObject(),
     };
-    JsonValue tests = match Json.Get(root, "tests") {
+    JsonValue tests = match (Json.Get(root, "tests"))
+    {
         Option::Some(value) => value,
         Option::None => Json.EmptyList(),
     };
     mut string text = "";
-    mut i64 index = 0_i64;
-    while index < Json.Length(tests) {
-        match Json.At(tests, index) {
-            Option::None => {},
+    mut i64 index = 0;
+    while (index < Json.Length(tests))
+    {
+        match (Json.At(tests, index))
+        {
+            Option::None => { },
             Option::Some(result) => {
-                if Field(result, "outcome") != "passed" {
+                if (Field(result, "outcome") != "passed")
+                {
                     text = text + "FAIL ${Field(result, "name")}" + String.Newline();
                     text = text + "  ${CleanReason(Field(result, "reason"))}" + String.Newline();
                 }
             },
         };
-        index = index + 1_i64;
+        index = index + 1;
     }
     return text;
 }
 
 /// Keeps the assertion message and drops the runtime-trap prefix in front of it.
-string CleanReason(string reason) {
+string CleanReason(string reason)
+{
     i64 start = String.IndexOf(reason, "Assertion failed: ");
-    if start < 0_i64 {
+    if (start < 0)
+    {
         return String.Trim(reason);
     }
-    return String.Trim(String.SubSlice(reason, start + 18_i64, String.Len(reason) - start - 18_i64));
+    return String.Trim(String.SubSlice(reason, start + 18, String.Len(reason) - start - 18));
 }
 
-string Field(JsonValue object, string key) {
-    return match Json.Get(object, key) {
+string Field(JsonValue object, string key)
+{
+    return match (Json.Get(object, key))
+    {
         Option::None => "",
-        Option::Some(value) => match Json.AsText(value) {
+        Option::Some(value) => match (Json.AsText(value))
+        {
             Option::None => "",
             Option::Some(text) => text,
         },

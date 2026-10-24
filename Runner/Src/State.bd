@@ -1,76 +1,96 @@
 // Progress: the names of finished exercises, one per line, in .lings-state.
 
 use Core.Collections.Array;
+use Core.Collections.List;
 use Core.FS;
 use Core.FS.FsError;
 use Core.Results;
 use Core.String;
 use Catalog;
 
-pub string FilePath() {
+pub string FilePath()
+{
     return ".lings-state";
 }
 
 /// Returns the finished exercise names; a missing file means no progress yet.
-pub string[] Load() {
+pub string[] Load()
+{
     Result<string, FsError> read = FS.ReadAllText(FilePath());
-    string text = match read {
+    string text = match (read)
+    {
         Result::Ok(content) => content,
         Result::Error(error) => "",
     };
     mut string[] done = Array.Empty<string>();
     string[] lines = String.Lines(text);
-    mut i64 index = 0_i64;
-    while index < Array.Len<string>(lines) {
+    mut i64 index = 0;
+    while (index < Array.Len<string>(lines))
+    {
         string name = String.Trim(lines[index]);
-        if name != "" {
+        if (name != "")
+        {
             done = Array.Append<string>(done, name);
         }
-        index = index + 1_i64;
+        index = index + 1;
     }
     return done;
 }
 
-pub bool IsDone(string[] done, string name) {
-    mut i64 index = 0_i64;
-    while index < Array.Len<string>(done) {
-        if done[index] == name {
+pub bool IsDone(string[] done, string name)
+{
+    mut i64 index = 0;
+    while (index < Array.Len<string>(done))
+    {
+        if (done[index] == name)
+        {
             return true;
         }
-        index = index + 1_i64;
+        index = index + 1;
     }
     return false;
 }
 
 /// Records `name` as finished and returns the updated list.
-pub string[] MarkDone(move string[] done, string name) {
-    if IsDone(done, name) {
+pub string[] MarkDone(string[] done, string name)
+{
+    if (IsDone(done, name))
+    {
         return done;
     }
-    string[] updated = Array.Append<string>(done, name);
+    mut List<string> names = List.FromArray<string>(done);
+    names.Push(name);
+    string[] updated = names.ToArray();
     Save(updated);
     return updated;
 }
 
 /// Writes the list; a failed write only loses progress, so it is reported, not fatal.
-pub unit Save(string[] done) {
+pub unit Save(string[] done)
+{
     string text = String.Join(done, String.Newline()) + String.Newline();
     Result<unit, FsError> written = FS.WriteAllText(FilePath(), text);
-    match written {
-        Result::Ok(ok) => {},
-        Result::Error(error) => { Core.Output.WriteLine("warning: could not write ${FilePath()}"); },
+    match (written)
+    {
+        Result::Ok(ok) => { },
+        Result::Error(error) => {
+            Core.Output.WriteLine("warning: could not write ${FilePath()}");
+        },
     };
 }
 
 /// Index of the first exercise not recorded as done, or the exercise count when all are done.
-pub i64 CurrentIndex(Course course, string[] done) {
+pub i64 CurrentIndex(Course course, string[] done)
+{
     i64 total = Array.Len<Exercise>(course.exercises);
-    mut i64 index = 0_i64;
-    while index < total {
-        if !IsDone(done, course.exercises[index].name) {
+    mut i64 index = 0;
+    while (index < total)
+    {
+        if (!IsDone(done, course.exercises[index].name))
+        {
             return index;
         }
-        index = index + 1_i64;
+        index = index + 1;
     }
     return total;
 }

@@ -3,18 +3,22 @@
 // A function declares its return type, its name, then typed parameters:
 // `i32 Add(i32 left, i32 right)`. A function that returns nothing returns `unit`.
 
-i32 Square(i32 value) {
+i32 Square(i32 value)
+{
     return value * value;
 }
 
-i32 SumOfSquares(i32 left, i32 right) {
+i32 SumOfSquares(i32 left, i32 right)
+{
     return Square(left) + Square(right);
 }
 
-test SquareOfFour {
+test SquareOfFour
+{
     Testing.Assert.Equal(Square(4), 16, "4 * 4");
 }
 
-test SumOfSquaresOfThreeAndFour {
+test SumOfSquaresOfThreeAndFour
+{
     Testing.Assert.Equal(SumOfSquares(3, 4), 25, "9 + 16");
 }
