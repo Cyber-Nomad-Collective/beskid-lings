@@ -1,6 +1,8 @@
 {
-  // The Beskid extension turns on format-on-save. The 0.6.6 formatter deletes the
-  // comments at the top of a file, which hold each exercise's instructions.
+  // TEMPORARY: the Beskid extension turns on format-on-save (the intended
+  // behaviour), but the 0.6.6 formatter deletes the comments at the top of a
+  // file, which hold each exercise's instructions. Remove this block once a
+  // build with the 0.6.7 formatter fix is installed.
   "[beskid]": {
     "editor.formatOnSave": false
   },
