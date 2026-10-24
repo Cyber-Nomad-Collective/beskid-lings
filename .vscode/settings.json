@@ -1,0 +1,16 @@
+{
+  // Build output: copied corelib sources, caches and lock files written by every
+  // exercise check. Watching it makes the Beskid language server rescan the whole
+  // course after each check, which delays completion and formatting.
+  "files.watcherExclude": {
+    "**/obj/**": true,
+    "**/Project.lock": true
+  },
+  "files.exclude": {
+    "**/obj": true,
+    "**/Project.lock": true
+  },
+  "search.exclude": {
+    "**/obj": true
+  }
+}
