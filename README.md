@@ -1,11 +1,17 @@
 # beskid-lings
 
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/Cyber-Nomad-Collective/beskid-lings?quickstart=1)
+
 Small broken Beskid programs. Fix each one until it compiles and its tests
 pass. Inspired by rustlings.
 
 ## Requirements
 
-- Beskid 0.6.6 or later on `PATH` (`beskid --version`).
+- Beskid 0.6.7 or later on `PATH` (`beskid --version`).
+
+Or click **Open in GitHub Codespaces** above: the codespace installs Beskid
+and the VS Code extension, then you start the course in its terminal. The
+codespace pins Beskid 0.6.7 and works once that release is published.
 
 ## Start
 
