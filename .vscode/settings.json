@@ -1,4 +1,9 @@
 {
+  // The Beskid extension turns on format-on-save. The 0.6.6 formatter deletes the
+  // comments at the top of a file, which hold each exercise's instructions.
+  "[beskid]": {
+    "editor.formatOnSave": false
+  },
   // Build output: copied corelib sources, caches and lock files written by every
   // exercise check. Watching it makes the Beskid language server rescan the whole
   // course after each check, which delays completion and formatting.
