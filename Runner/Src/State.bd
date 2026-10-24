@@ -5,6 +5,7 @@ use Core.FS;
 use Core.FS.FsError;
 use Core.Results;
 use Core.String;
+use Catalog;
 
 pub string FilePath() {
     return ".lings-state";
@@ -59,4 +60,17 @@ pub unit Save(string[] done) {
         Result::Ok(ok) => {},
         Result::Error(error) => { Core.Output.WriteLine("warning: could not write ${FilePath()}"); },
     };
+}
+
+/// Index of the first exercise not recorded as done, or the exercise count when all are done.
+pub i64 CurrentIndex(Course course, string[] done) {
+    i64 total = Array.Len<Exercise>(course.exercises);
+    mut i64 index = 0_i64;
+    while index < total {
+        if !IsDone(done, course.exercises[index].name) {
+            return index;
+        }
+        index = index + 1_i64;
+    }
+    return total;
 }

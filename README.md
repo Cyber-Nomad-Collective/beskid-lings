@@ -12,25 +12,24 @@ pass. Inspired by rustlings.
 From this folder:
 
 ```
-./lings
+beskid -q run --project Runner
 ```
 
-The runner starts in watch mode. It checks the exercises in order, shows what
-is wrong with the current one, and checks it again each time you save. Each
-exercise is a Beskid project under `exercises/`. Open its `Src/Main.bd`, read
-the comments, and fix the line marked `TODO`. Press Ctrl+C to stop; your
-progress is kept in `.lings-state`.
+The runner checks the exercises in order, shows what is wrong with the
+current one, and checks it again each time you save. Each exercise is a Beskid
+project under `exercises/`. Open its `Src/Main.bd`, read the comments, and fix
+the line marked `TODO`.
 
-Other commands, in a second terminal:
+While it runs, type a letter and press Enter:
 
-```
-./lings hint     # hint for the current exercise
-./lings list     # every exercise and its status
-./lings verify   # check everything from the start
-```
+| Key | Action |
+| --- | --- |
+| `h` | hint for the current exercise |
+| `l` | every exercise and its status |
+| `r` | check the current exercise again |
+| `q` | quit; progress stays in `.lings-state` |
 
-`./lings` is a short script for `beskid -q run --project Runner -- <command>`.
-Without `-q`, beskid prints every build step before the course output.
+`-q` keeps beskid from printing every build step before the course output.
 
 You can also check one exercise by hand:
 
@@ -43,4 +42,5 @@ beskid -q test --project exercises/01_intro/intro1
 - `lings.json` - the exercise order, hints and messages.
 - `exercises/` - one Beskid project per exercise, grouped by topic.
 - `solutions/` - reference answers. Try not to look.
-- `Runner/` - the runner, written in Beskid.
+- `Runner/` - the runner, written in Beskid. Watch mode uses fibers: one reads
+  your keys, one watches the exercise file, one runs the session.

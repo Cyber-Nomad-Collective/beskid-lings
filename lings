@@ -1,8 +1,0 @@
-#!/bin/sh
-# Runs the beskid-lings runner from the course folder.
-#   ./lings            watch mode
-#   ./lings hint       hint for the current exercise
-#   ./lings list       every exercise and its status
-#   ./lings verify     check everything from the start
-cd "$(dirname "$0")" || exit 2
-exec beskid -q run --project Runner -- "$@"

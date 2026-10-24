@@ -1,0 +1,147 @@
+// Watch mode: rerun the current exercise on save and answer single-letter commands.
+//
+// Three fibers share one event channel:
+//   - the key fiber sends "key:<line>" for every line typed (h, l, r, q + Enter);
+//   - the watcher fiber polls the current exercise file and sends "changed:<path>";
+//   - the session fiber (Session) receives events and drives the course.
+// Main joins the session fiber: in 0.6.6 a Receive that has to wait only parks
+// inside a spawned fiber, not in Main itself.
+
+use Concurrency.Channel;
+use Concurrency.ChannelError;
+use Concurrency.Fiber;
+use Concurrency.TryResult;
+use Core.Collections.Array;
+use Core.FS;
+use Core.FS.FsError;
+use Core.Input;
+use Core.Results;
+use Core.String;
+use Core.Syscall.SyscallError;
+use Core.Time;
+use Catalog;
+use Checker;
+use Report;
+use State;
+
+/// Runs watch mode until every exercise is done or the learner types q; returns the exit code.
+pub i32 Run(Course course) {
+    Fiber<i32> session = spawn (() => Session(course));
+    i32 code = match session.Join() {
+        Result::Ok(value) => value,
+        Result::Error(error) => 3,
+    };
+    // The key fiber is still blocked reading stdin; exit without waiting for it.
+    Core.Process.Exit(code);
+    return code;
+}
+
+unit Commands() {
+    Core.Output.WriteLine("Commands (type a letter, then Enter): h hint, l list, r run again, q quit");
+}
+
+i32 Session(Course course) {
+    Channel<string> events = Channel.Create<string>();
+    Channel<string> paths = Channel.Create<string>();
+    Fiber<unit> keys = spawn (() => KeyLoop(events));
+    Fiber<unit> watcher = spawn (() => WatchLoop(paths, events));
+    keys.Detach();
+    watcher.Detach();
+
+    Core.Output.WriteLine(course.welcome);
+    Core.Output.WriteLineEmpty();
+    mut string[] done = State.Load();
+    i64 total = Array.Len<Exercise>(course.exercises);
+    mut i64 index = State.CurrentIndex(course, done);
+    mut bool check = true;
+    while index < total {
+        Exercise exercise = course.exercises[index];
+        if check {
+            Channel.Send<string>(paths, Checker.SourcePath(exercise));
+            CheckResult result = Checker.Run(exercise);
+            if result.passed {
+                Core.Output.WriteLine("done ${exercise.name}");
+                done = State.MarkDone(move done, exercise.name);
+                index = State.CurrentIndex(course, done);
+                continue;
+            }
+            Report.Failure(exercise, result, index, total);
+            Commands();
+            check = false;
+        }
+        string event = NextEvent(events);
+        if event == "key:q" || event == "closed" {
+            Core.Output.WriteLine("Bye. Your progress is saved in ${State.FilePath()}.");
+            return 0;
+        }
+        if event == "key:h" {
+            Core.Output.WriteLine("Hint: ${exercise.hint}");
+        } else if event == "key:l" {
+            Report.List(course, done);
+        } else if event == "key:r" || event == "changed:${Checker.SourcePath(exercise)}" {
+            Core.Output.WriteLineEmpty();
+            Core.Output.WriteLine("----------------------------------------------------------------");
+            check = true;
+        } else if String.StartsWith(event, "key:") {
+            Commands();
+        }
+    }
+    Report.Finished(course);
+    return 0;
+}
+
+string NextEvent(Channel<string> events) {
+    Result<string, ChannelError> received = Channel.Receive<string>(events);
+    return match received {
+        Result::Ok(event) => event,
+        Result::Error(error) => "closed",
+    };
+}
+
+/// Sends one event per line typed; stops at end of input.
+unit KeyLoop(Channel<string> events) {
+    mut bool open = true;
+    while open {
+        Result<string, SyscallError> line = Input.ReadLine();
+        match line {
+            Result::Ok(text) => { Channel.Send<string>(events, "key:${String.Trim(text)}"); },
+            Result::Error(error) => { open = false; },
+        };
+    }
+    Channel.Send<string>(events, "closed");
+}
+
+/// Polls the file named by the latest message on `paths` and reports changes.
+unit WatchLoop(Channel<string> paths, Channel<string> events) {
+    mut string path = "";
+    mut string before = "";
+    while true {
+        match Channel.TryReceive<string>(paths) {
+            TryResult::Ok(next) => {
+                path = next;
+                before = SourceText(path);
+            },
+            TryResult::WouldBlock => {},
+            TryResult::Err(error) => { return; },
+        };
+        if path != "" {
+            string now = SourceText(path);
+            if now != before {
+                // Editors often save in two steps (truncate, then write); let the save finish.
+                Time.Sleep(Time.FromMilliseconds(300_i64));
+                before = SourceText(path);
+                Channel.Send<string>(events, "changed:${path}");
+            }
+        }
+        Time.Sleep(Time.FromMilliseconds(500_i64));
+    }
+}
+
+/// Returns the text of `path`, or "" when it cannot be read.
+string SourceText(string path) {
+    Result<string, FsError> read = FS.ReadAllText(path);
+    return match read {
+        Result::Ok(text) => text,
+        Result::Error(error) => "",
+    };
+}
