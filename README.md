@@ -10,8 +10,8 @@ pass. Inspired by rustlings.
 - Beskid 0.6.7-preview.4 or later on `PATH` (`beskid --version`).
 
 Or click **Open in GitHub Codespaces** above. The codespace installs Beskid
-0.6.7-preview.3 for Linux and the Beskid VS Code extension from the
-[`toolchain-0.6.7-preview.3`](https://github.com/Cyber-Nomad-Collective/beskid-lings/releases/tag/toolchain-0.6.7-preview.3)
+0.6.7-preview.4 for Linux and the Beskid VS Code extension from the
+[`toolchain-0.6.7-preview.4`](https://github.com/Cyber-Nomad-Collective/beskid-lings/releases/tag/toolchain-0.6.7-preview.4)
 release of this repository. When it is ready, run `Developer: Reload Window`
 once so the extension starts, then start the course in the terminal.
 
