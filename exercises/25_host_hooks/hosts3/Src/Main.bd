@@ -1,0 +1,53 @@
+// hosts3
+//
+// A host can run code when it starts: `startup(...)` runs once, during
+// `launch`, after the registry is built. Its parameters are services, and the
+// host fills them in exactly like `inject` fields: ask for what the registry
+// provides. A service is registered for its contract (`Greeter`), so ask for
+// the contract, not for the type that implements it.
+//
+// TODO: `startup` asks for a `PoliteGreeter`, which nothing registers. Ask for
+// the service the registry provides.
+
+pub contract Greeter
+{
+    string Greet(string name);
+}
+
+type PoliteGreeter : Greeter
+{
+    pub string Greet(string name)
+    {
+        return "Good morning, ${name}.";
+    }
+}
+
+type Reception
+{
+    inject Greeter greeter;
+
+    pub string Welcome(string name)
+    {
+        return this.greeter.Greet(name);
+    }
+}
+
+host AppHost()
+{
+    registry
+    {
+        single PoliteGreeter for Greeter;
+        single Reception;
+    }
+
+    startup(Reception reception, PoliteGreeter greeter)
+    {
+        Testing.Assert.Equal(reception.Welcome("Ada"), "Good morning, Ada.");
+        Testing.Assert.Equal(greeter.Greet("Bob"), "Good morning, Bob.");
+    }
+}
+
+test ReceptionGreetsThroughTheHost
+{
+    launch AppHost();
+}

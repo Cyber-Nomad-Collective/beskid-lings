@@ -146,6 +146,12 @@
       "dir": "24_concurrency/concurrency1",
       "mode": "test",
       "hint": "Before the `TryReceive` loop, walk `workers` with an index and call `Join()` on each one, as the solution of exercise 15 joins its producer."
+    },
+    {
+      "name": "hosts3",
+      "dir": "25_host_hooks/hosts3",
+      "mode": "test",
+      "hint": "The registry says `single PoliteGreeter for Greeter;`, so the service is known as `Greeter`. Change the `startup` parameter to `Greeter greeter`."
     }
   ]
 }
