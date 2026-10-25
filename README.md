@@ -7,7 +7,7 @@ pass. Inspired by rustlings.
 
 ## Requirements
 
-- Beskid 0.6.7-preview.3 or later on `PATH` (`beskid --version`).
+- Beskid 0.6.7-preview.4 or later on `PATH` (`beskid --version`).
 
 Or click **Open in GitHub Codespaces** above. The codespace installs Beskid
 0.6.7-preview.3 for Linux and the Beskid VS Code extension from the
