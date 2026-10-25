@@ -37,12 +37,12 @@ test SumOfArray
 
 test LargestElement
 {
-    Testing.Assert.Equal(Largest([3, 9, 2]), 9, "9 is the largest");
-    Testing.Assert.Equal(Largest([-3, -9, -2]), -2, "-2 is the largest");
+    Testing.Assert.Equal(Largest([3, 9, 2]), 9);
+    Testing.Assert.Equal(Largest([-3, -9, -2]), -2);
 }
 
 test LengthOfArray
 {
     i32[] values = [5, 6, 7];
-    Testing.Assert.Equal(Array.Len<i32>(values), 3, "three elements");
+    Testing.Assert.Equal(Array.Len<i32>(values), 3);
 }

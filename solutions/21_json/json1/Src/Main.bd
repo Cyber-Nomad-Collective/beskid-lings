@@ -40,7 +40,7 @@ string MakeUser(string name)
 
 test ReadsTheName
 {
-    Testing.Assert.Equal(UserName("{\"name\": \"Ada\", \"age\": 36}"), "Ada", "name field");
+    Testing.Assert.Equal(UserName("{\"name\": \"Ada\", \"age\": 36}"), "Ada");
 }
 
 test MissingNameIsUnknown
@@ -51,5 +51,5 @@ test MissingNameIsUnknown
 
 test BuildsAUser
 {
-    Testing.Assert.Equal(MakeUser("Bob"), "{\"name\":\"Bob\"}", "compact JSON");
+    Testing.Assert.Equal(MakeUser("Bob"), "{\"name\":\"Bob\"}");
 }

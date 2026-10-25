@@ -26,9 +26,9 @@ i32 SumUpTo(i32 limit)
 
 test ClassifyValues
 {
-    Testing.Assert.Equal(Classify(-5), "negative", "below zero");
-    Testing.Assert.Equal(Classify(0), "zero", "zero itself");
-    Testing.Assert.Equal(Classify(7), "positive", "above zero");
+    Testing.Assert.Equal(Classify(-5), "negative");
+    Testing.Assert.Equal(Classify(0), "zero");
+    Testing.Assert.Equal(Classify(7), "positive");
 }
 
 test SumUpToTen

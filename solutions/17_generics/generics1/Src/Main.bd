@@ -52,13 +52,13 @@ string Label<T>(T item) where T: Named
 
 test FirstOrWorksForNumbersAndStrings
 {
-    Testing.Assert.Equal(FirstOr([7, 8], 0), 7, "first number");
+    Testing.Assert.Equal(FirstOr([7, 8], 0), 7);
     Testing.Assert.Equal(FirstOr<string>([], "none"), "none", "empty array gives the fallback");
 }
 
-test CountEqualFindsTwo
+test CountEqual
 {
-    Testing.Assert.Equal(CountEqual(["a", "b", "a"], "a"), 2, "two a");
+    Testing.Assert.Equal(CountEqual(["a", "b", "a"], "a"), 2);
 }
 
 test LabelUsesTheContract

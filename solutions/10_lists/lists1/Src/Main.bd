@@ -28,6 +28,6 @@ string ItemAt(List<string> items, i64 index)
 test ThreeItems
 {
     List<string> items = Shopping();
-    Testing.Assert.Equal(items.Count(), 3, "three items");
+    Testing.Assert.Equal(items.Count(), 3);
     Testing.Assert.Equal(ItemAt(items, 2), "apples", "apples come last");
 }

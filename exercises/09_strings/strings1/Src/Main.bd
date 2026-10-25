@@ -22,7 +22,7 @@ bool IsValidName(string name)
 
 test GreetingUsesNameAndCount
 {
-    Testing.Assert.Equal(Greeting("Ada", 2), "Hello, Ada! You have 2 new messages.", "greeting text");
+    Testing.Assert.Equal(Greeting("Ada", 2), "Hello, Ada! You have 2 new messages.");
 }
 
 test OuterSpacesDoNotCount

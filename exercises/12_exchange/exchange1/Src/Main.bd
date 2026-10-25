@@ -25,6 +25,6 @@ test DrainReturnsOldMessages
         messages: ["hi", "lunch?"],
     };
     string[] old = inbox.Drain();
-    Testing.Assert.Equal(Core.Collections.Array.Len<string>(old), 2, "two old messages");
+    Testing.Assert.Equal(Core.Collections.Array.Len<string>(old), 2);
     Testing.Assert.Equal(Core.Collections.Array.Len<string>(inbox.messages), 0, "inbox is empty");
 }

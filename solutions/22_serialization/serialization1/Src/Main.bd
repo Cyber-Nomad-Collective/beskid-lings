@@ -49,6 +49,6 @@ test PointRoundTrips
         x: 3,
         y: 4,
     }));
-    Testing.Assert.Equal(loaded.x, 3, "x survives");
-    Testing.Assert.Equal(loaded.y, 4, "y survives");
+    Testing.Assert.Equal(loaded.x, 3);
+    Testing.Assert.Equal(loaded.y, 4);
 }

@@ -59,9 +59,9 @@ test PairKeepsBothTypes
         first: "age",
         second: 42,
     };
-    Testing.Assert.Equal(age.First(), "age", "first");
-    Testing.Assert.Equal(age.Second(), 42, "second");
-    Testing.Assert.Equal(age.Swapped().First(), 42, "swapped first");
+    Testing.Assert.Equal(age.First(), "age");
+    Testing.Assert.Equal(age.Second(), 42);
+    Testing.Assert.Equal(age.Swapped().First(), 42);
 }
 
 test StackOfStrings
@@ -72,6 +72,6 @@ test StackOfStrings
     };
     words.Push("one");
     words.Push("two");
-    Testing.Assert.Equal(words.Size(), 2, "two words");
+    Testing.Assert.Equal(words.Size(), 2);
     Testing.Assert.Equal(words.Top(), "two", "last pushed is on top");
 }

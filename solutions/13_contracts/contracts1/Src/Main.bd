@@ -36,7 +36,7 @@ i32 TotalArea(Shape first, Shape second)
     return first.Area() + second.Area();
 }
 
-test TotalAreaOfTwoShapes
+test TotalArea
 {
     Testing.Assert.Equal(TotalArea(Square
     {

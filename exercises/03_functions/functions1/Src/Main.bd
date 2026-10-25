@@ -20,7 +20,7 @@ test SquareOfFour
     Testing.Assert.Equal(Square(4), 16, "4 * 4");
 }
 
-test SumOfSquaresOfThreeAndFour
+test SumOfSquares
 {
     Testing.Assert.Equal(SumOfSquares(3, 4), 25, "9 + 16");
 }
