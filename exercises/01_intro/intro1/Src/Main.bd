@@ -9,10 +9,12 @@
 //
 // TODO: make `Answer` return the answer the test expects.
 
-i32 Answer() {
+i32 Answer()
+{
     return 41;
 }
 
-test AnswerIsFortyTwo {
+test AnswerIsFortyTwo
+{
     Testing.Assert.Equal(Answer(), 42, "Answer() should return 42");
 }

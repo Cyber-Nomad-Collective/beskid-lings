@@ -9,16 +9,14 @@
 use Core.Process;
 use Core.Results;
 
-pub unit Open(string path) {
+pub unit Open(string path)
+{
     // The script exits 0 whatever happens: failing to open a file must not stop the course.
-    string script = "if [ \"$LINGS_EDITOR\" = none ]; then exit 0; "
-        + "elif [ -n \"$LINGS_EDITOR\" ]; then $LINGS_EDITOR \"$1\"; "
-        + "elif command -v code >/dev/null 2>&1; then code -r \"$1\"; "
-        + "elif [ \"$TERM_PROGRAM\" = vscode ] && [ \"$(uname)\" = Darwin ]; then open -a \"Visual Studio Code\" \"$1\"; "
-        + "fi; exit 0";
+    string script = "if [ \"$LINGS_EDITOR\" = none ]; then exit 0; " + "elif [ -n \"$LINGS_EDITOR\" ]; then $LINGS_EDITOR \"$1\"; " + "elif command -v code >/dev/null 2>&1; then code -r \"$1\"; " + "elif [ \"$TERM_PROGRAM\" = vscode ] && [ \"$(uname)\" = Darwin ]; then open -a \"Visual Studio Code\" \"$1\"; " + "fi; exit 0";
     Result<ProcessOutput, ProcessError> ran = Process.Run("/bin/sh", ["-c", script, "sh", path]);
-    match ran {
-        Result::Ok(output) => {},
-        Result::Error(error) => {},
+    match (ran)
+    {
+        Result::Ok(output) => { },
+        Result::Error(error) => { },
     };
 }

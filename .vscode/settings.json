@@ -1,11 +1,4 @@
 {
-  // TEMPORARY: the Beskid extension turns on format-on-save (the intended
-  // behaviour). The 0.6.6 formatter deleted header comments (fixed in
-  // 0.6.7-preview.1); preview.1 still rewrites string interpolation `${x}`
-  // into `+` concatenation. Remove this block once that is fixed.
-  "[beskid]": {
-    "editor.formatOnSave": false
-  },
   // Build output: copied corelib sources, caches and lock files written by every
   // exercise check. Watching it makes the Beskid language server rescan the whole
   // course after each check, which delays completion and formatting.

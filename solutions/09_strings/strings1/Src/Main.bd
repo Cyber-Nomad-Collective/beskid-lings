@@ -6,24 +6,29 @@
 
 use Core.String;
 
-string Greeting(string name, i32 unread) {
+string Greeting(string name, i32 unread)
+{
     return "Hello, ${name}! You have ${unread} new messages.";
 }
 
 /// A user name is valid when it has at least 3 characters, not counting outer spaces.
-bool IsValidName(string name) {
-    return String.Len(String.Trim(name)) >= 3_i64;
+bool IsValidName(string name)
+{
+    return String.Len(String.Trim(name)) >= 3;
 }
 
-test GreetingUsesNameAndCount {
-    Testing.Assert.Equal(Greeting("Ada", 2), "Hello, Ada! You have 2 new messages.", "greeting text");
+test GreetingUsesNameAndCount
+{
+    Testing.Assert.Equal(Greeting("Ada", 2), "Hello, Ada! You have 2 new messages.");
 }
 
-test OuterSpacesDoNotCount {
+test OuterSpacesDoNotCount
+{
     Testing.Assert.True(IsValidName("Ada"), "three letters");
     Testing.Assert.False(IsValidName("  a  "), "one letter with spaces around it");
 }
 
-test ContainsFindsAWord {
+test ContainsFindsAWord
+{
     Testing.Assert.True(String.Contains(Greeting("Ada", 2), "Ada"), "the name is in the greeting");
 }

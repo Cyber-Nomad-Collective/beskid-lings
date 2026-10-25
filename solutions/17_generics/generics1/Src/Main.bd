@@ -8,51 +8,63 @@
 
 use Core.Collections.Array;
 
-pub contract Named {
+pub contract Named
+{
     string Name();
 }
 
-type Cat : Named {
+type Cat : Named
+{
     string nickname;
 
-    pub string Name() {
+    pub string Name()
+    {
         return this.nickname;
     }
 }
 
-T FirstOr<T>(T[] values, T fallback) {
-    if Array.Len<T>(values) == 0_i64 {
+T FirstOr<T>(T[] values, T fallback)
+{
+    if (Array.Len<T>(values) == 0)
+    {
         return fallback;
     }
     return values[0];
 }
 
-i64 CountEqual<T>(T[] values, T target) {
-    mut i64 count = 0_i64;
-    mut i64 index = 0_i64;
-    while index < Array.Len<T>(values) {
-        if values[index] == target {
-            count = count + 1_i64;
+i64 CountEqual<T>(T[] values, T target)
+{
+    mut i64 count = 0;
+    for value in values
+    {
+        if (value == target)
+        {
+            count = count + 1;
         }
-        index = index + 1_i64;
     }
     return count;
 }
 
-string Label<T>(T item) where T: Named {
+string Label<T>(T item) where T: Named
+{
     return "<${item.Name()}>";
 }
 
-test FirstOrWorksForNumbersAndStrings {
-    i32[] numbers = [7, 8];
-    Testing.Assert.Equal(FirstOr(numbers, 0), 7, "first number");
+test FirstOrWorksForNumbersAndStrings
+{
+    Testing.Assert.Equal(FirstOr([7, 8], 0), 7);
     Testing.Assert.Equal(FirstOr<string>([], "none"), "none", "empty array gives the fallback");
 }
 
-test CountEqualFindsTwo {
-    Testing.Assert.Equal(CountEqual(["a", "b", "a"], "a"), 2_i64, "two a");
+test CountEqual
+{
+    Testing.Assert.Equal(CountEqual(["a", "b", "a"], "a"), 2);
 }
 
-test LabelUsesTheContract {
-    Testing.Assert.Equal(Label(Cat { nickname: "Mruczek" }), "<Mruczek>", "label");
+test LabelUsesTheContract
+{
+    Testing.Assert.Equal(Label(Cat
+    {
+        nickname: "Mruczek",
+    }), "<Mruczek>", "label");
 }

@@ -1,22 +1,28 @@
 // exchange1
 //
-// A field that holds a Moved value (an array, a list) cannot simply be
-// overwritten: the old value would be lost while something may still own it.
-// `exchange(place, move value)` puts the new value in and gives you the old one.
+// `exchange(place, value)` puts a new value into a field (or an array element)
+// and gives you the old one back, in one step. It is the clean way to empty a
+// field and keep what was in it.
 
-type Inbox {
+type Inbox
+{
     string[] messages;
 
     /// Empties the inbox and returns the messages it held.
-    string[] Drain(mut this) {
+    string[] Drain(mut this)
+    {
         string[] empty = [];
-        return exchange(this.messages, move empty);
+        return exchange(this.messages, empty);
     }
 }
 
-test DrainReturnsOldMessages {
-    mut Inbox inbox = Inbox { messages: ["hi", "lunch?"] };
+test DrainReturnsOldMessages
+{
+    mut Inbox inbox = Inbox
+    {
+        messages: ["hi", "lunch?"],
+    };
     string[] old = inbox.Drain();
-    Testing.Assert.Equal(Core.Collections.Array.Len<string>(old), 2_i64, "two old messages");
-    Testing.Assert.Equal(Core.Collections.Array.Len<string>(inbox.messages), 0_i64, "inbox is empty");
+    Testing.Assert.Equal(Core.Collections.Array.Len<string>(old), 2);
+    Testing.Assert.Equal(Core.Collections.Array.Len<string>(inbox.messages), 0, "inbox is empty");
 }

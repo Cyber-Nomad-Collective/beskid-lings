@@ -13,39 +13,40 @@
 use Core.Collections.List;
 use Core.Parallel.Combiners;
 
-List<i64> UpTo(i64 count) {
+List<i64> UpTo(i64 count)
+{
     mut List<i64> values = List.New<i64>();
     mut i64 i = 1_i64;
-    while i <= count {
-        values = values.Push(i);
+    while (i <= count)
+    {
+        values.Push(i);
         i = i + 1_i64;
     }
     return values;
 }
 
 /// Sum of the squares of the odd numbers from 1 to `count`.
-i64 SumOfOddSquares(i64 count) {
-    return UpTo(count)
-        .Parallel()
-        .Where((x) => x % 2_i64 == 1_i64)
-        .Map((x) => x * x)
-        .Reduce(0_i64, SumI64 { });
+i64 SumOfOddSquares(i64 count)
+{
+    return UpTo(count).Parallel().Where(x => x % 2_i64 == 1_i64).Map(x => x * x).Reduce(0_i64, SumI64 { });
 }
 
 /// How many odd numbers there are from 1 to `count`: map each one to 1 and add them up.
-i64 CountOdd(i64 count) {
+i64 CountOdd(i64 count)
+{
     mut i64 counted = 0_i64;
-    UpTo(count)
-        .Parallel()
-        .Where((x) => x % 2_i64 == 1_i64)
-        .ForEach((x) => { counted = counted + 1_i64; });
+    UpTo(count).Parallel().Where(x => x % 2_i64 == 1_i64).ForEach(x => {
+        counted = counted + 1_i64;
+    });
     return counted;
 }
 
-test OddSquaresUpToTen {
+test OddSquaresUpToTen
+{
     Testing.Assert.Equal(SumOfOddSquares(10_i64), 165_i64, "1 + 9 + 25 + 49 + 81");
 }
 
-test FiveOddNumbersUpToTen {
+test FiveOddNumbersUpToTen
+{
     Testing.Assert.Equal(CountOdd(10_i64), 5_i64, "1, 3, 5, 7, 9");
 }

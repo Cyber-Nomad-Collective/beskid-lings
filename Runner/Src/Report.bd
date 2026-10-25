@@ -5,22 +5,26 @@ use Catalog;
 use Checker;
 use State;
 
-pub unit Failure(Exercise exercise, CheckResult result, i64 done, i64 total) {
+pub unit Failure(Exercise exercise, CheckResult result, i64 done, i64 total)
+{
     Core.Output.WriteLine("[${done}/${total}] done. Current: ${exercise.name}");
     Core.Output.WriteLineEmpty();
     Core.Output.WriteLine(result.output);
     Core.Output.WriteLine("Edit ${Checker.SourcePath(exercise)}");
 }
 
-pub unit Finished(Course course) {
+pub unit Finished(Course course)
+{
     i64 total = Array.Len<Exercise>(course.exercises);
     Core.Output.WriteLineEmpty();
     Core.Output.WriteLine("[${total}/${total}] done. ${course.final}");
 }
 
-pub unit Hint(Course course, string[] done) {
+pub unit Hint(Course course, string[] done)
+{
     i64 index = State.CurrentIndex(course, done);
-    if index == Array.Len<Exercise>(course.exercises) {
+    if (index == Array.Len<Exercise>(course.exercises))
+    {
         Core.Output.WriteLine("Every exercise is done. No hints needed.");
         return;
     }
@@ -28,21 +32,25 @@ pub unit Hint(Course course, string[] done) {
     Core.Output.WriteLine("Hint for ${exercise.name}: ${exercise.hint}");
 }
 
-pub unit List(Course course, string[] done) {
+pub unit List(Course course, string[] done)
+{
     i64 total = Array.Len<Exercise>(course.exercises);
     i64 current = State.CurrentIndex(course, done);
-    mut i64 index = 0_i64;
-    while index < total {
+    mut i64 index = 0;
+    while (index < total)
+    {
         Exercise exercise = course.exercises[index];
         mut string mark = "    ";
-        if State.IsDone(done, exercise.name) {
+        if (State.IsDone(done, exercise.name))
+        {
             mark = "done";
         }
-        if index == current {
+        if (index == current)
+        {
             mark = "  ->";
         }
         Core.Output.WriteLine("${mark}  ${exercise.name}  (${Checker.SourcePath(exercise)})");
-        index = index + 1_i64;
+        index = index + 1;
     }
     Core.Output.WriteLine("${Array.Len<string>(done)}/${total} done");
 }

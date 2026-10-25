@@ -7,50 +7,71 @@
 
 use Core.Collections.Array;
 
-type Pair<A, B> {
+type Pair<A, B>
+{
     A first;
     B second;
 
-    pub A First() {
+    pub A First()
+    {
         return this.first;
     }
 
-    pub B Second() {
+    pub B Second()
+    {
         return this.second;
     }
 
-    pub Pair<B, A> Swapped() {
-        return Pair<B, A> { first: this.second, second: this.first };
+    pub Pair<B, A> Swapped()
+    {
+        return Pair<B, A>
+        {
+            first: this.second,
+            second: this.first,
+        };
     }
 }
 
-type Bag<T> {
+type Stack<T>
+{
     T[] items;
 
-    pub unit Add(mut this, T value) {
+    pub unit Push(mut this, T value)
+    {
         this.items = Array.Append<T>(this.items, value);
     }
 
-    pub i64 Size() {
+    pub i64 Size()
+    {
         return Array.Len<T>(this.items);
     }
 
-    pub T Last() {
-        return this.items[Array.Len<T>(this.items) - 1_i64];
+    pub T Top()
+    {
+        return this.items[Array.Len<T>(this.items) - 1];
     }
 }
 
-test PairKeepsBothTypes {
-    Pair<string, i32> age = Pair<string, i32> { first: "age", second: 42 };
-    Testing.Assert.Equal(age.First(), "age", "first");
-    Testing.Assert.Equal(age.Second(), 42, "second");
-    Testing.Assert.Equal(age.Swapped().First(), 42, "swapped first");
+test PairKeepsBothTypes
+{
+    Pair<string, i32> age = Pair<string, i32>
+    {
+        first: "age",
+        second: 42,
+    };
+    Testing.Assert.Equal(age.First(), "age");
+    Testing.Assert.Equal(age.Second(), 42);
+    Testing.Assert.Equal(age.Swapped().First(), 42);
 }
 
-test BagOfStrings {
-    mut Bag<string> words = Bag<string> { items: [] };
-    words.Add("one");
-    words.Add("two");
-    Testing.Assert.Equal(words.Size(), 2_i64, "two words");
-    Testing.Assert.Equal(words.Last(), "two", "last added");
+test StackOfStrings
+{
+    mut Stack<string> words = Stack<string>
+    {
+        items: [],
+    };
+    words.Push("one");
+    words.Push("two");
+    Testing.Assert.Equal(words.Size(), 2);
+    Testing.Assert.Equal(words.Top(), "two", "last pushed is on top");
 }

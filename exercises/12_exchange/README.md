@@ -1,13 +1,13 @@
 # Exchange
 
-A field that owns a Moved value is replaced with `exchange`:
+`exchange(place, value)` puts `value` into a field or an array element and
+returns what was there, in one step:
 
 ```
-string[] old = exchange(this.messages, move replacement);
+string[] old = exchange(this.messages, empty);
 ```
 
-`exchange` puts `replacement` into the field and returns what was there, in one
-step, so the old value always has exactly one owner. `move this.messages`
-takes the value out and leaves an empty one behind.
+It is the clean way to empty a field and keep its old content, for example to
+drain an inbox or swap a buffer.
 
 A method that changes its object declares `mut this` as its first parameter.

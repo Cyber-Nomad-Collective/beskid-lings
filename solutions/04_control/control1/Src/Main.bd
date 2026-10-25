@@ -3,29 +3,37 @@
 // `if` / `else` choose a branch. `while` repeats while a condition holds.
 // `for i in range(start, end)` counts from start up to, but not including, end.
 
-string Classify(i32 value) {
-    if value < 0 {
+string Classify(i32 value)
+{
+    if (value < 0)
+    {
         return "negative";
-    } else if value == 0 {
+    }
+    else if (value == 0)
+    {
         return "zero";
     }
     return "positive";
 }
 
-i32 SumUpTo(i32 limit) {
+i32 SumUpTo(i32 limit)
+{
     mut i32 total = 0;
-    for i in range(1, limit + 1) {
+    for i in range(1, limit + 1)
+    {
         total = total + i;
     }
     return total;
 }
 
-test ClassifyValues {
-    Testing.Assert.Equal(Classify(-5), "negative", "below zero");
-    Testing.Assert.Equal(Classify(0), "zero", "zero itself");
-    Testing.Assert.Equal(Classify(7), "positive", "above zero");
+test ClassifyValues
+{
+    Testing.Assert.Equal(Classify(-5), "negative");
+    Testing.Assert.Equal(Classify(0), "zero");
+    Testing.Assert.Equal(Classify(7), "positive");
 }
 
-test SumUpToTen {
+test SumUpToTen
+{
     Testing.Assert.Equal(SumUpTo(10), 55, "1 + 2 + ... + 10");
 }

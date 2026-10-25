@@ -4,16 +4,23 @@
 // Create one with `Point { x: 1, y: 2 }`. Methods live inside the type body
 // and read fields through `this`.
 
-type Rectangle {
+type Rectangle
+{
     i32 width;
     i32 height;
 
-    i32 Area() {
+    i32 Area()
+    {
         return this.width * this.height;
     }
 }
 
-test AreaOfRectangle {
-    Rectangle box = Rectangle { width: 3, height: 4 };
+test AreaOfRectangle
+{
+    Rectangle box = Rectangle
+    {
+        width: 3,
+        height: 4,
+    };
     Testing.Assert.Equal(box.Area(), 12, "3 * 4");
 }

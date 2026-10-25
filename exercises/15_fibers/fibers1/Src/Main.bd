@@ -15,39 +15,47 @@ use Concurrency.Fiber;
 use Concurrency.FiberError;
 use Core.Results;
 
-i64 SlowSquare(i64 value) {
+i64 SlowSquare(i64 value)
+{
     return value * value;
 }
 
-unit Producer(Channel<i64> numbers) {
-    Channel.Send<i64>(numbers, 10_i64);
+unit Producer(Channel<i64> numbers)
+{
+    Channel.Send<i64>(numbers, 10);
 }
 
-i64 Joined(Result<i64, FiberError> result) {
-    return match result {
+i64 Joined(Result<i64, FiberError> result)
+{
+    return match (result)
+    {
         Result::Ok(value) => value,
-        Result::Error(_) => -1_i64,
+        Result::Error(_) => -1,
     };
 }
 
 /// Takes the next value without waiting; -1 when the channel is empty.
-i64 Received(TryResult<i64, ChannelError> result) {
-    return match result {
+i64 Received(TryResult<i64, ChannelError> result)
+{
+    return match (result)
+    {
         TryResult::Ok(value) => value,
-        _ => -1_i64,
+        _ => -1,
     };
 }
 
-test FiberResultAfterJoin {
-    Fiber<i64> worker = spawn (() => SlowSquare(7_i64));
-    Testing.Assert.Equal(Joined(worker.Join()), 49_i64, "7 * 7");
+test FiberResultAfterJoin
+{
+    Fiber<i64> worker = spawn (() => SlowSquare(7));
+    Testing.Assert.Equal(Joined(worker.Join()), 49, "7 * 7");
 }
 
-test TwoValuesThroughAChannel {
+test TwoValuesThroughAChannel
+{
     Channel<i64> numbers = Channel.Create<i64>();
     Fiber<unit> producer = spawn (() => Producer(numbers));
     producer.Join();
     i64 first = Received(Channel.TryReceive<i64>(numbers));
     i64 second = Received(Channel.TryReceive<i64>(numbers));
-    Testing.Assert.Equal(first + second, 30_i64, "10 + 20");
+    Testing.Assert.Equal(first + second, 30, "10 + 20");
 }

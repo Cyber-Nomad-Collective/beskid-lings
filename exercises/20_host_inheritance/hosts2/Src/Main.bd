@@ -11,34 +11,44 @@
 // TODO: `AppHost` replaces the clock with a different lifetime than `BaseHost`.
 // Make the lifetimes match.
 
-pub contract Clock {
+pub contract Clock
+{
     i64 Now();
 }
 
-type SystemClock : Clock {
-    pub i64 Now() {
-        return 1_i64;
+type SystemClock : Clock
+{
+    pub i64 Now()
+    {
+        return 1;
     }
 }
 
-type FixedClock : Clock {
-    pub i64 Now() {
-        return 42_i64;
+type FixedClock : Clock
+{
+    pub i64 Now()
+    {
+        return 42;
     }
 }
 
-host BaseHost() {
-    registry {
+host BaseHost()
+{
+    registry
+    {
         single SystemClock for Clock;
     }
 }
 
-host AppHost() : BaseHost {
-    registry {
+host AppHost() : BaseHost
+{
+    registry
+    {
         transient FixedClock for Clock;
     }
 }
 
-test ChildHostReplacesTheClock {
+test ChildHostReplacesTheClock
+{
     launch AppHost();
 }

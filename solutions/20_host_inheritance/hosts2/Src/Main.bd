@@ -8,34 +8,44 @@
 // a new one each time something asks. A child may replace the implementation,
 // but it must keep the lifetime the parent chose.
 
-pub contract Clock {
+pub contract Clock
+{
     i64 Now();
 }
 
-type SystemClock : Clock {
-    pub i64 Now() {
-        return 1_i64;
+type SystemClock : Clock
+{
+    pub i64 Now()
+    {
+        return 1;
     }
 }
 
-type FixedClock : Clock {
-    pub i64 Now() {
-        return 42_i64;
+type FixedClock : Clock
+{
+    pub i64 Now()
+    {
+        return 42;
     }
 }
 
-host BaseHost() {
-    registry {
+host BaseHost()
+{
+    registry
+    {
         single SystemClock for Clock;
     }
 }
 
-host AppHost() : BaseHost {
-    registry {
+host AppHost() : BaseHost
+{
+    registry
+    {
         single FixedClock for Clock;
     }
 }
 
-test ChildHostReplacesTheClock {
+test ChildHostReplacesTheClock
+{
     launch AppHost();
 }

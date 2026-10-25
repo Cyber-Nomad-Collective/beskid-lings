@@ -9,31 +9,38 @@
 
 use Core.Results;
 
-Result<i32, string> Divide(i32 dividend, i32 divisor) {
+Result<i32, string> Divide(i32 dividend, i32 divisor)
+{
     return Result::Ok(dividend / divisor);
 }
 
 /// Divides twice; the first error stops the calculation.
-Result<i32, string> Quarter(i32 value) {
+Result<i32, string> Quarter(i32 value)
+{
     i32 half = Divide(value, 2);
     return Divide(half, 2);
 }
 
-string Describe(Result<i32, string> result) {
-    return match result {
+string Describe(Result<i32, string> result)
+{
+    return match (result)
+    {
         Result::Ok(value) => "ok ${value}",
         Result::Error(message) => "error: ${message}",
     };
 }
 
-test DivideOk {
+test DivideOk
+{
     Testing.Assert.Equal(Describe(Divide(10, 2)), "ok 5", "10 / 2");
 }
 
-test DivideByZero {
+test DivideByZero
+{
     Testing.Assert.Equal(Describe(Divide(1, 0)), "error: cannot divide by zero", "1 / 0");
 }
 
-test QuarterUsesQuestionMark {
+test QuarterUsesQuestionMark
+{
     Testing.Assert.Equal(Describe(Quarter(20)), "ok 5", "20 / 2 / 2");
 }

@@ -1,15 +1,17 @@
 #!/usr/bin/env bash
-# Installs the Beskid 0.6.6 toolchain for Linux x86-64 and downloads the matching
-# VS Code extension, both from the beskid-lings release `toolchain-0.6.6`.
+# Installs the Beskid 0.6.7-preview.3 toolchain for Linux x86-64 and downloads the
+# matching VS Code extension, both from the beskid-lings release
+# `toolchain-0.6.7-preview.3`. BESKID_LINGS_ASSETS overrides the download location
+# (used to test this script before a release is published).
 set -euo pipefail
 
 repo="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
-release="https://github.com/Cyber-Nomad-Collective/beskid-lings/releases/download/toolchain-0.6.6"
-toolchain="beskid-0.6.6-x86_64-unknown-linux-gnu"
-toolchain_sha256="b57a416dee5120b14445c349c467cb0be6b99fff356f02cb2d8393a4dc57638c"
-extension="beskid-vscode-0.6.6-linux-x64.vsix"
-extension_sha256="0b1b2dafcba719661778c838234c4de425d7b4355e021942cad375b606e5ee6b"
+release="${BESKID_LINGS_ASSETS:-https://github.com/Cyber-Nomad-Collective/beskid-lings/releases/download/toolchain-0.6.7-preview.3}"
+toolchain="beskid-0.6.7-preview.3-x86_64-unknown-linux-gnu"
+toolchain_sha256="b05940b745e642f500aed87a47a06179ce99ec17435f5436443448424b2a58b1"
+extension="beskid-vscode-0.6.7-preview.3-linux-x64.vsix"
+extension_sha256="edd27b62503bf9245c3055b3c7fcb2dcb36465eda3caf66e8bf02ad4a553bdc0"
 
 # Native builds compile and link with clang.
 sudo apt-get update -qq
