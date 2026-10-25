@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Runs each time VS Code attaches: installs the Beskid extension once, then
 # prints how to start the course.
-extension="${HOME}/.beskid/downloads/beskid-vscode-0.6.6-linux-x64.vsix"
+extension="${HOME}/.beskid/downloads/beskid-vscode-0.6.7-preview.3-linux-x64.vsix"
 if command -v code >/dev/null 2>&1 && [ -f "${extension}" ]; then
   if ! code --list-extensions 2>/dev/null | grep -q '^beskid\.beskid-vscode$'; then
     code --install-extension "${extension}" --force >/dev/null 2>&1 \

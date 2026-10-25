@@ -7,12 +7,11 @@ pass. Inspired by rustlings.
 
 ## Requirements
 
-- Beskid 0.6.7-preview.2 or later on `PATH` (`beskid --version`). This branch
-  uses the 0.6.7 syntax (fields end with `;`); `main` stays on Beskid 0.6.6.
+- Beskid 0.6.7-preview.3 or later on `PATH` (`beskid --version`).
 
-Or click **Open in GitHub Codespaces** above (it opens `main`, on Beskid 0.6.6). The codespace installs Beskid
-0.6.6 for Linux and the Beskid VS Code extension from the
-[`toolchain-0.6.6`](https://github.com/Cyber-Nomad-Collective/beskid-lings/releases/tag/toolchain-0.6.6)
+Or click **Open in GitHub Codespaces** above. The codespace installs Beskid
+0.6.7-preview.3 for Linux and the Beskid VS Code extension from the
+[`toolchain-0.6.7-preview.3`](https://github.com/Cyber-Nomad-Collective/beskid-lings/releases/tag/toolchain-0.6.7-preview.3)
 release of this repository. When it is ready, run `Developer: Reload Window`
 once so the extension starts, then start the course in the terminal.
 
