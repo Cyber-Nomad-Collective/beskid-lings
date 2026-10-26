@@ -55,7 +55,6 @@ beskid -q test --project exercises/01_intro/intro1
 - `beskid-lings.bws` - the Beskid workspace: the runner and every exercise as
   members, so the editor's language server knows all of them. Open the course
   folder in VS Code and the Beskid extension picks it up.
-
 - `lings.json` - the exercise order, hints and messages.
 - `exercises/` - one Beskid project per exercise, grouped by topic.
 - `solutions/` - reference answers. Try not to look.
