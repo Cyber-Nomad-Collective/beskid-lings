@@ -1,0 +1,110 @@
+workspace {
+  name = "beskid_lings"
+  resolver = v1
+  schema = "beskid.workspace.v1"
+}
+
+member "runner" {
+  path = "Runner"
+  description = "The beskid-lings course runner."
+}
+
+member "intro1" {
+  path = "exercises/01_intro/intro1"
+}
+
+member "variables1" {
+  path = "exercises/02_variables/variables1"
+}
+
+member "functions1" {
+  path = "exercises/03_functions/functions1"
+}
+
+member "control1" {
+  path = "exercises/04_control/control1"
+}
+
+member "types1" {
+  path = "exercises/05_types/types1"
+}
+
+member "enums1" {
+  path = "exercises/06_enums/enums1"
+}
+
+member "results1" {
+  path = "exercises/07_results/results1"
+}
+
+member "collections1" {
+  path = "exercises/08_collections/collections1"
+}
+
+member "strings1" {
+  path = "exercises/09_strings/strings1"
+}
+
+member "lists1" {
+  path = "exercises/10_lists/lists1"
+}
+
+member "move1" {
+  path = "exercises/11_move/move1"
+}
+
+member "exchange1" {
+  path = "exercises/12_exchange/exchange1"
+}
+
+member "contracts1" {
+  path = "exercises/13_contracts/contracts1"
+}
+
+member "attributes1" {
+  path = "exercises/14_attributes/attributes1"
+}
+
+member "fibers1" {
+  path = "exercises/15_fibers/fibers1"
+}
+
+member "isolates1" {
+  path = "exercises/16_isolates/isolates1"
+}
+
+member "generics1" {
+  path = "exercises/17_generics/generics1"
+}
+
+member "generics2" {
+  path = "exercises/18_generic_types/generics2"
+}
+
+member "hosts1" {
+  path = "exercises/19_hosts/hosts1"
+}
+
+member "hosts2" {
+  path = "exercises/20_host_inheritance/hosts2"
+}
+
+member "json1" {
+  path = "exercises/21_json/json1"
+}
+
+member "serialization1" {
+  path = "exercises/22_serialization/serialization1"
+}
+
+member "network1" {
+  path = "exercises/23_network/network1"
+}
+
+member "concurrency1" {
+  path = "exercises/24_concurrency/concurrency1"
+}
+
+member "hosts3" {
+  path = "exercises/25_host_hooks/hosts3"
+}
