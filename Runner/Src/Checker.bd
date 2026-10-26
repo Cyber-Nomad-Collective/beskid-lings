@@ -75,7 +75,7 @@ pub CheckResult Run(Exercise exercise)
 }
 
 /// Runs beskid and captures stdout, stderr and the exit code.
-Invocation Invoke(string[] beskidArgs)
+Invocation Invoke(move string[] beskidArgs)
 {
     Result<ProcessOutput, ProcessError> ran = Process.Run("beskid", beskidArgs);
     return match (ran)
