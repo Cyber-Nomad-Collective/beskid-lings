@@ -52,7 +52,7 @@ pub bool IsDone(string[] done, string name)
 }
 
 /// Records `name` as finished and returns the updated list.
-pub string[] MarkDone(string[] done, string name)
+pub string[] MarkDone(move string[] done, string name)
 {
     if (IsDone(done, name))
     {
